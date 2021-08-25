@@ -28,8 +28,8 @@ yesterday = y.strftime("%Y%m%d")
 # rawpath = "/tmp/TierData/"
 rawpath = "/Users/phunr/var/www/html/TierData/json"
 csvpath = "/Users/phunr/var/www/html/TierData/backfill"
-outpath = "/Users/phunr/var/www/html/output
-avgoutpath = "/var/www/html/avgerages-dev"
+outpath = "/Users/phunr/var/www/html/output/sum"
+avgoutpath = "/Users/phunr/var/www/html/output/avg"
 
 runtimes = os.listdir(rawpath)
 runtimes = sorted(runtimes, reverse=True)
@@ -145,7 +145,7 @@ for r in region:
                 logging.info(f"Exists: {avgloutputcheck}")
 # endregion
 
-# region PRIMARY GEN FUNCTION--- TIMELINE + AVERAGES
+# TIMELINE + AVERAGES
 print("Compiling Lookup")
 logging.info("Compiling Lookup")
 
