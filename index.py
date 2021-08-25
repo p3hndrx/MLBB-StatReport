@@ -25,12 +25,17 @@ today = x.strftime("%Y%m%d")
 logging.info(f"Runtime: {today}")
 yesterday = y.strftime("%Y%m%d")
 
-# rawpath = "/tmp/TierData/"
+# PATHS
 rawpath = "/Users/phunr/var/www/html/TierData/json"
 csvpath = "/Users/phunr/var/www/html/TierData/backfill"
 outpath = "/Users/phunr/var/www/html/output/sum"
 avgoutpath = "/Users/phunr/var/www/html/output/avg"
 
+# report vars
+reportout = "/Users/phunr/var/www/html/output/report"
+src = "/Users/phunr/var/www/html/src"
+
+# GENERATE FOLDER LISTS
 runtimes = os.listdir(rawpath)
 runtimes = sorted(runtimes, reverse=True)
 print(runtimes)
@@ -41,8 +46,8 @@ bfruntimes = sorted(bfruntimes, reverse=True)
 print(bfruntimes)
 logging.info(f"Crawl BackFill Runtimes: {bfruntimes}")
 
+# DATASETS
 lang = ["en"]
-
 region = ["all", "NA", "EU", "SA", "SE"]
 dtrange = ["Week"]
 mode = ["All-Modes", "Classic", "Rank", "Brawl"]
