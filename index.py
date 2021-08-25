@@ -10,6 +10,8 @@ import matplotlib.pyplot as plt
 
 import logging
 
+import roles
+
 # endregion
 
 # region ENVIRONMENT
@@ -55,6 +57,7 @@ region = ["all", "NA", "EU", "SA", "SE"]
 dtrange = ["Week"]
 mode = ["All-Modes", "Classic", "Rank", "Brawl"]
 level = ["All-Levels", "Normal", "High", "Very-High"]
+prof = ["assassin","marksman","mage","tank","support","fighter"]
 
 # endregion
 
@@ -167,6 +170,8 @@ i = 0
 t = 0
 
 for l in lang:
+    #dfx = pd.DataFrame(
+         #columns=['runtime', 'name', 'win', 'use', 'kda', 'region', 'period', 'elo', 'mode'])
     for r in region:
         for dt in dtrange:
             for m in mode:
@@ -230,6 +235,20 @@ for l in lang:
                     print(f"Combined CSV: {reportout}/{r}.{m}.{lvl}.csv")
                     logging.info(f"Combined CSV: {reportout}/{r}.{m}.{lvl}.csv")
                     input("Press Enter to continue...")
+    #TEST MAIN OUT
+    #print(f"{dfx}")
+    #dfx.to_csv(f"{reportout}/master.csv", index=False)
+    #print(f"Combined CSV: {reportout}/master.csv")
+    #logging.info(f"Combined CSV: {reportout}/master.csv")
+    #input("Press Enter to continue...")
+
+                    print(f"Cycling Roles...")
+                    for p in prof:
+                        report = "\n"
+                        rslt = getattr(roles, p)
+                        dfp = dfx[dfx['name'].isin(rslt)]
+                        print(f"{dfp}")
+                        input("Press Enter to continue...")
 
 
                     heroes = dfx['name'].unique()
@@ -275,6 +294,7 @@ for l in lang:
                         logging.info(f"Output Plot: {op}")
                         # plt.show()
                         plt.close('all')
+
 
 # endregion
 
