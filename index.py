@@ -15,7 +15,8 @@ import logging
 # region ENVIRONMENT
 logging.basicConfig(filename="/tmp/sync-summarygen.log", level=logging.DEBUG,
                     format="%(asctime)s:%(levelname)s:%(message)s")
-logging.info(f"********************** STARTING SUMMARY GEN V2")
+logging.info(f"********************** STARTING REPORT GEN V1")
+print("Starting Report Gen...")
 # endregion
 
 # region VARIABLES
@@ -36,14 +37,16 @@ reportout = "/Users/phunr/var/www/html/output/report"
 src = "/Users/phunr/var/www/html/src"
 
 # GENERATE FOLDER LISTS
+print("Checking Folder Paths...")
+
 runtimes = os.listdir(rawpath)
 runtimes = sorted(runtimes, reverse=True)
-print(runtimes)
+#print(runtimes)
 logging.info(f"Crawl Runtimes: {runtimes}")
 
 bfruntimes = os.listdir(csvpath)
 bfruntimes = sorted(bfruntimes, reverse=True)
-print(bfruntimes)
+#print(bfruntimes)
 logging.info(f"Crawl BackFill Runtimes: {bfruntimes}")
 
 # DATASETS
@@ -57,6 +60,7 @@ level = ["All-Levels", "Normal", "High", "Very-High"]
 
 # region CHECK PATHS
 # File Count
+print("Counting Source Files...")
 for folder in runtimes:
     # count = os.system(f"find {rawpath}{folder} -type f | wc -l")
     totalFiles = 0
@@ -70,7 +74,7 @@ for folder in runtimes:
         for Files in files:
             totalFiles += 1
 
-    print(f"{folder}:{totalFiles}")
+    #print(f"{folder}:{totalFiles}")
     logging.info(f"Folder: {folder}")
     logging.info(f"Files: {totalFiles}")
     # print('Total Number of directories',totalDir)
@@ -86,7 +90,7 @@ for bfolder in bfruntimes:
         for bFiles in bfiles:
             totalBFiles += 1
 
-    print(f"{bfolder}:{totalBFiles}")
+    #print(f"{bfolder}:{totalBFiles}")
     logging.info(f"Folder: {bfolder}")
     logging.info(f"Files: {totalBFiles}")
     # print('Total Number of directories',totalBDir)
@@ -100,7 +104,7 @@ for r in region:
         print(f"Making Folder: {outputcheck}")
         logging.info(f"Making Folder: {outputcheck}")
     else:
-        print(f"Exists: {outputcheck}")
+        #print(f"Exists: {outputcheck}")
         logging.info(f"Exists: {outputcheck}")
     for m in mode:
         moutputcheck = f"{outputcheck}/{m}"
@@ -109,7 +113,7 @@ for r in region:
             print(f"Making Folder: {moutputcheck}")
             logging.info(f"Making Folder: {moutputcheck}")
         else:
-            print(f"Exists: {moutputcheck}")
+            #print(f"Exists: {moutputcheck}")
             logging.info(f"Exists: {moutputcheck}")
         for lvl in level:
             loutputcheck = f"{moutputcheck}/{lvl}"
@@ -118,7 +122,7 @@ for r in region:
                 print(f"Making Folder: {loutputcheck}")
                 logging.info(f"Making Folder: {loutputcheck}")
             else:
-                print(f"Exists: {loutputcheck}")
+                #print(f"Exists: {loutputcheck}")
                 logging.info(f"Exists: {loutputcheck}")
 # Generate Folders (Averages)
 for r in region:
@@ -128,7 +132,7 @@ for r in region:
         print(f"Making Folder: {avgoutputcheck}")
         logging.info(f"Making Folder: {avgoutputcheck}")
     else:
-        print(f"Exists: {avgoutputcheck}")
+        #print(f"Exists: {avgoutputcheck}")
         logging.info(f"Exists: {avgoutputcheck}")
     for m in mode:
         avgmoutputcheck = f"{avgoutputcheck}/{m}"
@@ -137,7 +141,7 @@ for r in region:
             print(f"Making Folder: {avgmoutputcheck}")
             logging.info(f"Making Folder: {avgmoutputcheck}")
         else:
-            print(f"Exists: {avgmoutputcheck}")
+            #print(f"Exists: {avgmoutputcheck}")
             logging.info(f"Exists: {avgmoutputcheck}")
         for lvl in level:
             avgloutputcheck = f"{avgmoutputcheck}/{lvl}"
@@ -146,12 +150,12 @@ for r in region:
                 print(f"Making Folder: {avgloutputcheck}")
                 logging.info(f"Making Folder: {avgloutputcheck}")
             else:
-                print(f"Exists: {avgloutputcheck}")
+                #print(f"Exists: {avgloutputcheck}")
                 logging.info(f"Exists: {avgloutputcheck}")
 # endregion
 
 # region TIMELINE + AVERAGES
-print("Compiling Lookup")
+print("Compiling Lookup...")
 logging.info("Compiling Lookup")
 
 # Create master table
@@ -174,7 +178,7 @@ for l in lang:
                         # constructbackfill
                         csvfile = f'{csvpath}/{pt}/en/{r}/{dt}.{lvl}.{m}.csv'
                         if os.path.exists(csvfile):
-                            print("Requesting: " + csvfile)
+                            #print("Requesting: " + csvfile)
                             logging.info("Requesting: " + csvfile)
 
                             dfc = pd.read_csv(csvfile, sep=r'\s*,\s*', skipinitialspace=True, header=0,
@@ -192,13 +196,13 @@ for l in lang:
                             dfc['mode'] = f"{m}"
                             dfx = pd.concat([dfx, dfc], axis=0)
                         else:
-                            print(f"Bad Request: Missing {csvfile}")
+                            #print(f"Bad Request: Missing {csvfile}")
                             logging.warning(f"Bad Request: Missing: {csvfile}")
 
                         # constructoutput
                         jsonfile = f'{rawpath}/{pt}/en/{r}/{dt}.{lvl}.{m}.json'
                         if os.path.exists(jsonfile):
-                            print("Requesting: " + jsonfile)
+                            #print("Requesting: " + jsonfile)
                             logging.info("Requesting: " + jsonfile)
 
                             ##### BUILD TABLES ####
@@ -209,7 +213,6 @@ for l in lang:
                                 df = pd.DataFrame(rows, columns=['name', 'win', 'use', 'kda'])
                                 df['win'] = df['win'].str.rstrip('%').astype('float')
                                 df['use'] = df['use'].str.rstrip('%').astype('float')
-                                # df['win'] = pd.to_numeric(df['win'])
                                 df['runtime'] = f"{pt}"
                                 df['runtime'] = df['runtime'].astype('datetime64[ns]')
                                 df['region'] = f"{r}"
@@ -218,15 +221,17 @@ for l in lang:
                                 df['mode'] = f"{m}"
                                 dfx = pd.concat([dfx, df], axis=0)
                         else:
-                            print(f"Bad Request: Missing: {jsonfile}")
+                            #print(f"Bad Request: Missing: {jsonfile}")
                             logging.warning(f"Bad Request: Missing: {jsonfile}")
 
                     # TEST OUT TO CSV
-                    # dfx.to_csv(f"{outpath}/{r}/{m}/{lvl}.csv",index=False)
-                    # print(f"Combined:{lvl}-{m}-{r}\n{dfx}")
-                    # logging.info(f"Combined:{lvl}-{m}-{r}\n{dfx}")
+                    print(f"{dfx}")
+                    dfx.to_csv(f"{reportout}/{r}.{m}.{lvl}.csv",index=False)
+                    print(f"Combined CSV: {reportout}/{r}.{m}.{lvl}.csv")
+                    logging.info(f"Combined CSV: {reportout}/{r}.{m}.{lvl}.csv")
+                    input("Press Enter to continue...")
 
-                    # heroes = dfx.groupby('name')
+
                     heroes = dfx['name'].unique()
                     for hero in heroes:
                         plt.style.use('dark_background')
@@ -255,7 +260,6 @@ for l in lang:
                                              marker='D', color='red', legend=False, zorder=3, ax=ax)
                         plt.style.use('dark_background')
                         plt.xticks(rotation=15)
-                        # df2.plot(x='runtime',xlabel="Date", kind='line', marker='o',linewidth=2,alpha=.7,subplots=True,color=['khaki', 'lightcyan','thistle'])
                         plt.suptitle(f'Historical Data for {hero}\nRegion: {r}, Elo: {lvl}, Mode:{m}', fontsize=12,
                                      fontname='monospace')
 
