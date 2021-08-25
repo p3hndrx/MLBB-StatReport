@@ -242,15 +242,16 @@ for l in lang:
     #logging.info(f"Combined CSV: {reportout}/master.csv")
     #input("Press Enter to continue...")
 
-                    print(f"Cycling Roles...")
+
                     for p in prof:
+                        print(f"Cycling Roles...{r}.{m}.{lvl}.{p}:")
                         report = "\n"
                         rslt = getattr(roles, p)
                         dfp = dfx[dfx['name'].isin(rslt)]
                         print(f"{dfp}")
                         input("Press Enter to continue...")
 
-
+'''
                     heroes = dfx['name'].unique()
                     for hero in heroes:
                         plt.style.use('dark_background')
@@ -294,7 +295,7 @@ for l in lang:
                         logging.info(f"Output Plot: {op}")
                         # plt.show()
                         plt.close('all')
-
+'''
 
 # endregion
 
