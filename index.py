@@ -235,9 +235,6 @@ for l in lang:
                     heroes = dfx['name'].unique()
                     for hero in heroes:
                         plt.style.use('dark_background')
-                        # TEST OUT TO CSV
-                        # outfilename = hero + '.csv'
-                        # print(outfilename)
 
                         # OUTPUT LINECHART
                         df2 = dfx[dfx['name'] == hero]
@@ -279,27 +276,6 @@ for l in lang:
                         # plt.show()
                         plt.close('all')
 
-                        # OUTPUT AVERAGES
-                        op = f"{avgoutpath}/{r}/{m}/{lvl}/{shero}.png"
-
-                        # fig, ax = plt.subplots(facecolor='darkslategrey')
-                        fig, (ax1, ax2, ax3) = plt.subplots(1, 3, facecolor='darkslategrey', sharex=False, sharey=False)
-                        df2.boxplot('win', ax=ax1, showmeans=True, fontsize=10, grid=False)
-                        df2.boxplot('use', ax=ax2, showmeans=True, fontsize=10, grid=False)
-                        df2.boxplot('kda', ax=ax3, showmeans=True, fontsize=10, grid=False)
-                        plt.style.use('dark_background')
-                        plt.suptitle(f'Summary Data for {hero}\nRegion: {r}, Elo: {lvl}, Mode:{m}', fontsize=12,
-                                     fontname='monospace')
-                        # for axis in ax:
-                        #    print(type(axis))
-                        plt.tight_layout()
-                        # file output
-                        plt.savefig(op, transparent=False, bbox_inches="tight")
-
-                        print(f"Output Plot: {op}")
-                        logging.info(f"Output Plot: {op}")
-                        # plt.show()
-                        plt.close('all')
 # endregion
 
 # region CLOSE-FOOTER
