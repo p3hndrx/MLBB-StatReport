@@ -13,6 +13,7 @@ import matplotlib.image as mpimg
 
 import logging
 import roles
+import heroicons
 
 # endregion
 
@@ -278,8 +279,17 @@ for l in lang:
 
                             print(f"{rslt_df}")
 
+                            #TABLE PLOT
                             fig, ax = plt.subplots(facecolor='darkslategrey')
                             plt.style.use('dark_background')
+
+                            d = latest.strftime("%m/%d/%Y")
+                            plt.suptitle(
+                                f'Top 5 {p} by {clabel}\nRegion: {r}, Elo: {lvl}, Mode:{m}\n As of {d}',
+                                fontsize=12,
+                                fontname='monospace')
+                            plt.style.use('dark_background')
+                            plt.axis('off')
                             table = ax.table(cellText=rslt_df.values, colLabels=rslt_df.columns, loc='center')
 
                             op = f"{reportout}/{r}.{m}.{lvl}.{p}.{c}-table.png"
@@ -294,9 +304,8 @@ for l in lang:
                             dfc.sort_values(by=[str(c)], ascending=1)
                             #input("Press Enter to continue...")
 
-                            # Graph:
 
-                            # all in one
+                            # HISTORICAL GRAPH PLOT
                             dfc.pivot(index='runtime', columns='name', values=c).plot(figsize=(9, 6), marker='o',linewidth=2)
                             plt.xticks(rotation=15)
 
@@ -310,14 +319,10 @@ for l in lang:
                                 ax[i].set_ylabel(name)
                             '''
 
-
-                            #plt.suptitle(
-                            #    f'Historical Data for Top 5 {p} by {clabel}\nRegion: {r}, Elo: {lvl}, Mode:{m}',
-                            #    fontsize=12,
-                            #    fontname='monospace')
-                            plt.style.use('dark_background')
-
-
+                            plt.suptitle(
+                                f'Historical Top 5 {p} by {clabel}\nRegion: {r}, Elo: {lvl}, Mode:{m}',
+                                fontsize=12,
+                                fontname='monospace')
 
                             # file output
                             #plt.show()
