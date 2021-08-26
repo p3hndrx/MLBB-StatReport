@@ -262,42 +262,59 @@ for l in lang:
                         latest = dfp['runtime'].iloc[-1]
 
                         for c in crit:
+                            #Get top heroes by each criteria
                             print(f"Last Date: {latest}; Top: {c}")
                             rslt_df = dfp[dfp['runtime'] == latest]
-                            rslt_df = rslt_df.sort_values(by=[str(c)]).head(5)
+                            rslt_df = rslt_df.sort_values(by=[str(c)],ascending=False).head(5)
                             #print(f"{rslt_df}")
+
+                            rslt_df = rslt_df[['name', 'win','use','kda']]
+                            fig, ax = plt.subplots()
+                            table = ax.table(cellText=rslt_df.values, colLabels=rslt_df.columns, loc='center')
                             #input("Press Enter to continue...")
 
-                            #print(f"{rslt_df['name']}")
                             top = rslt_df['name'].tolist()
                             print(f"{top}")
-                            input("Press Enter to continue...")
                             dfc = dfp[dfp['name'].isin(top)]
-                            dfc.sort(by=[str(c)], ascending=[1, 0])
+                            dfc.sort_values(by=[str(c)], ascending=1)
+                            #input("Press Enter to continue...")
 
                             #Graph:
                             print(f"Charting Changes...{r}.{m}.{lvl}.{p}: by {c}")
                             plt.style.use('dark_background')
                             op = f"{reportout}/{r}.{m}.{lvl}.{p}.{c}.png"
-                            n = len(pd.unique(dfc['name']))
 
+
+                            # all in one
+                            dfc.pivot(index='runtime', columns='name', values=c).plot(figsize=(9, 6), marker='o',linewidth=2)
+
+                            '''#subplots
+                            n = len(pd.unique(dfc['name']))
                             fig, ax = plt.subplots(nrows=n, sharex=True)
-                            #dfp.pivot(index='runtime', columns='name', values='win').plot(subplots=True, layout=(n, 1), figsize=(6, 9), marker='o',linewidth=2)
+                            #dfc.pivot(index='runtime', columns='name', values=c).plot(subplots=True, layout=(n, 1), figsize=(6, 9), marker='o',linewidth=2)
                             for i, name in enumerate(dfc['name'].unique(), 0):
                                 df_filtered = dfc[dfc['name'] == name]
                                 ax[i].plot(df_filtered['runtime'], df_filtered[str(c)], marker='o', linewidth=2)
                                 ax[i].set_ylabel(name)
+                            '''
+                            if c == "win":
+                                clabel = "WinRate%"
+                            elif c == "kda":
+                                clabel = "KDA"
+                            elif c == "use":
+                                clabel = "Use%"
 
                             plt.style.use('dark_background')
                             plt.xticks(rotation=15)
-                            plt.suptitle(f'Historical Data for {p}\nRegion: {r}, Elo: {lvl}, Mode:{m}', fontsize=12,
+                            plt.suptitle(f'Historical Data for Top 5 {p} by {clabel}\nRegion: {r}, Elo: {lvl}, Mode:{m}', fontsize=12,
                                      fontname='monospace')
-                            # file output
-                            plt.savefig(op, transparent=False, bbox_inches="tight")
+
 
                             print(f"Combined Image: {op}")
                             logging.info(f"Combined Image: {op}")
-                            #plt.show()
+                            # file output
+                            plt.show()
+                            #plt.savefig(op, transparent=False, bbox_inches="tight")
                             plt.close('all')
                             input("Press Enter to continue...")
 
