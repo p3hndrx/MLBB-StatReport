@@ -194,7 +194,6 @@ for l in lang:
                             dfc = dfc[['name', 'win', 'use', 'kda']]
                             dfc['win'] = dfc['win'].str.rstrip('%').astype('float')
                             dfc['use'] = dfc['use'].str.rstrip('%').astype('float')
-                            # df['win'] = pd.to_numeric(df['win'])
                             dfc['runtime'] = f"{pt}"
                             dfc['runtime'] = dfc['runtime'].astype('datetime64[ns]')
                             dfc['region'] = f"{r}"
@@ -236,7 +235,7 @@ for l in lang:
                     logging.info(f"Combined CSV: {reportout}/{r}.{m}.{lvl}.csv")
                     dfx.drop(dfx[dfx['win'] == 100].index, inplace=True)
                     dfx.drop(dfx[dfx['use'] <= .001].index, inplace=True)
-                    dfx.drop(dfx[dfx['kda'] >= 20].index, inplace=True)
+                    dfx.drop(dfx[dfx['kda'] >= 10].index, inplace=True)
 
                     # TEST OUT TO CSV
                     print(f"Source Table... \n{dfx}")
@@ -251,21 +250,10 @@ for l in lang:
     #logging.info(f"Combined CSV: {reportout}/master.csv")
     #input("Press Enter to continue...")
 
-                    #CREATE FIGURE
 
                     for p in prof:
-                        fig = plt.figure(figsize=(11, 17))
-                        gs = GridSpec(nrows=7, ncols=1)
-                        op = f"{reportout}/{r}.{m}.{lvl}.png"
-
-                        #plt.style.use('dark_background')
-
-                        x = 0
-                        y = 0
-
-
                         print(f"Cycling Roles...{r}.{m}.{lvl}.{p}:")
-                        report = "\n"
+
                         rslt = getattr(roles, p)
                         dfp = dfx[dfx['name'].isin(rslt)]
                         print(f"{dfp}")
@@ -288,19 +276,16 @@ for l in lang:
                             elif c == "use":
                                 clabel = "Use%"
 
-                            #ax = fig.add_subplot(gs[y, :])
-                            #table = ax.table(cellText=rslt_df.values, colLabels=rslt_df.columns, loc='center')
-                            fig.add_subplot(gs[y, 0]).table(cellText=rslt_df.values, colLabels=rslt_df.columns, loc='center')
-
-                            print(f"Position:{x}")
-                            print(f"Top 5 {p} by {clabel}\nRegion: {r}, Elo: {lvl}, Mode:{m}")
-
-
-                            y+=1
-                            x+=1
-
-
                             print(f"{rslt_df}")
+
+                            fig, ax = plt.subplots(facecolor='darkslategrey')
+                            plt.style.use('dark_background')
+                            table = ax.table(cellText=rslt_df.values, colLabels=rslt_df.columns, loc='center')
+
+                            op = f"{reportout}/{r}.{m}.{lvl}.{p}.{c}-table.png"
+                            print(f"Combined Image: {op}")
+                            plt.savefig(op, transparent=False, bbox_inches="tight")
+
                             #input("Press Enter to continue...")
 
                             top = rslt_df['name'].tolist()
@@ -309,11 +294,7 @@ for l in lang:
                             dfc.sort_values(by=[str(c)], ascending=1)
                             #input("Press Enter to continue...")
 
-                            #Graph:
-                            print(f"Charting Changes...{r}.{m}.{lvl}.{p}: by {c}")
-
-                            #op = f"{reportout}/{r}.{m}.{lvl}.{p}.{c}.png"
-
+                            # Graph:
 
                             # all in one
                             dfc.pivot(index='runtime', columns='name', values=c).plot(figsize=(9, 6), marker='o',linewidth=2)
@@ -338,13 +319,14 @@ for l in lang:
 
 
 
+                            # file output
+                            #plt.show()
+                            op = f"{reportout}/{r}.{m}.{lvl}.{p}.{c}.png"
+                            plt.savefig(op, transparent=False, bbox_inches="tight")
+                            print(f"Combined Image: {op}")
+                            logging.info(f"Combined Image: {op}")
 
-                        print(f"Combined Image: {op}")
-                        logging.info(f"Combined Image: {op}")
-                        # file output
-                        #plt.show()
-                        plt.savefig(op, transparent=False, bbox_inches="tight")
-                        plt.close('all')
+                            plt.close('all')
                         input("Press Enter to continue...")
 
 
