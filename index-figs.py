@@ -9,7 +9,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from matplotlib.gridspec import GridSpec
 from matplotlib.offsetbox import TextArea, DrawingArea, OffsetImage, AnnotationBbox
-import matplotlib.image as mpimg
+from matplotlib.cbook import get_sample_data
 
 import logging
 import roles
@@ -36,6 +36,7 @@ rawpath = "/Users/phunr/var/www/html/TierData/json"
 csvpath = "/Users/phunr/var/www/html/TierData/backfill"
 outpath = "/Users/phunr/var/www/html/output/sum"
 avgoutpath = "/Users/phunr/var/www/html/output/avg"
+imgsrc = "/Users/phunr/PycharmProjects/MLBB-StatReport/heroes"
 
 # report vars
 reportout = "/Users/phunr/var/www/html/output/report"
@@ -55,6 +56,7 @@ bfruntimes = sorted(bfruntimes, reverse=True)
 logging.info(f"Crawl BackFill Runtimes: {bfruntimes}")
 
 # DATASETS
+crit = ['win','use','kda']
 lang = ["en"]
 region = ["all", "NA", "EU", "SA", "SE"]
 dtrange = ["Week"]
@@ -160,7 +162,7 @@ for r in region:
                 logging.info(f"Exists: {avgloutputcheck}")
 # endregion
 
-# region TIMELINE + AVERAGES
+# region TIMELINE
 print("Compiling Lookup...")
 logging.info("Compiling Lookup")
 
@@ -244,13 +246,14 @@ for l in lang:
                     print(f"Combined CSV: {reportout}/{r}.{m}.{lvl}.csv")
                     logging.info(f"Combined CSV: {reportout}/{r}.{m}.{lvl}.csv")
                     #input("Press Enter to continue...")
+    '''
     #TEST MAIN OUT
-    #print(f"{dfx}")
-    #dfx.to_csv(f"{reportout}/master.csv", index=False)
-    #print(f"Combined CSV: {reportout}/master.csv")
-    #logging.info(f"Combined CSV: {reportout}/master.csv")
-    #input("Press Enter to continue...")
-
+    print(f"{dfx}")
+    dfx.to_csv(f"{reportout}/master.csv", index=False)
+    print(f"Combined CSV: {reportout}/master.csv")
+    logging.info(f"Combined CSV: {reportout}/master.csv")
+    input("Press Enter to continue...")
+    '''
 
                     for p in prof:
                         print(f"Cycling Roles...{r}.{m}.{lvl}.{p}:")
@@ -260,10 +263,13 @@ for l in lang:
                         print(f"{dfp}")
 
                         #FILTER top 5:
-                        crit = ['win','use','kda']
                         latest = dfp['runtime'].iloc[-1]
 
                         for c in crit:
+                            fig, ax = plt.subplots(facecolor='darkslategrey')
+                            plt.style.use('dark_background')
+                            d = latest.strftime("%m/%d/%Y")
+
                             #Get top heroes by each criteria
                             print(f"Last Date: {latest}; Top: {c}")
                             rslt_df = dfp[dfp['runtime'] == latest]
@@ -279,11 +285,9 @@ for l in lang:
 
                             print(f"{rslt_df}")
 
-                            #TABLE PLOT
-                            fig, ax = plt.subplots(facecolor='darkslategrey')
-                            plt.style.use('dark_background')
 
-                            d = latest.strftime("%m/%d/%Y")
+                            #TABLE PLOT
+                            '''
                             plt.suptitle(
                                 f'Top 5 {p} by {clabel}\nRegion: {r}, Elo: {lvl}, Mode:{m}\n As of {d}',
                                 fontsize=12,
@@ -295,19 +299,38 @@ for l in lang:
                             op = f"{reportout}/{r}.{m}.{lvl}.{p}.{c}-table.png"
                             print(f"Combined Image: {op}")
                             plt.savefig(op, transparent=False, bbox_inches="tight")
-
-                            #input("Press Enter to continue...")
+                            input("Press Enter to continue...")
+                            '''
 
                             top = rslt_df['name'].tolist()
-                            print(f"{top}")
+                            #print(f"{top}")
                             dfc = dfp[dfp['name'].isin(top)]
                             dfc.sort_values(by=[str(c)], ascending=1)
                             #input("Press Enter to continue...")
 
 
                             # HISTORICAL GRAPH PLOT
-                            dfc.pivot(index='runtime', columns='name', values=c).plot(figsize=(9, 6), marker='o',linewidth=2)
+                            dfc.pivot(index='runtime', columns='name', values=c).plot(figsize=(5, 5), marker='o',linewidth=2)
                             plt.xticks(rotation=15)
+                            p = p.capitalize()
+                            plt.suptitle(
+                                f'Historical Top 5 {p} by {clabel} (As of {d})\nRegion: {r}, Elo: {lvl}, Mode:{m}',
+                                fontsize=12,
+                                fontname='monospace')
+                            plt.legend(loc=2)
+
+
+                            # LABEL
+                            print("Generating Labels...")
+                            for hero in top:
+                                shero = hero.replace("-", "").replace("'", "").replace(".", "").replace(" ", "").lower()
+                                print(f"Searching {shero} from {hero}")
+                                logging.debug(f"Searching {shero} from {hero}")
+                                fn = get_sample_data(f"{imgsrc}/{shero}.png", asfileobj=False)
+                                arr_img = plt.imread(fn, format='png')
+
+                                #Generate Coordinates
+                                xy = (latest, 0.7)
 
                             '''#subplots
                             n = len(pd.unique(dfc['name']))
@@ -318,11 +341,6 @@ for l in lang:
                                 ax[i].plot(df_filtered['runtime'], df_filtered[str(c)], marker='o', linewidth=2)
                                 ax[i].set_ylabel(name)
                             '''
-
-                            plt.suptitle(
-                                f'Historical Top 5 {p} by {clabel}\nRegion: {r}, Elo: {lvl}, Mode:{m}',
-                                fontsize=12,
-                                fontname='monospace')
 
                             # file output
                             #plt.show()
