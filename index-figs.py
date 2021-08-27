@@ -18,9 +18,9 @@ import heroicons
 # endregion
 
 # region ENVIRONMENT
-logging.basicConfig(filename="/tmp/sync-reportgen.log", level=logging.DEBUG,
+logging.basicConfig(filename="/tmp/sync-reportgen-type1.log", level=logging.DEBUG,
                     format="%(asctime)s:%(levelname)s:%(message)s")
-logging.info(f"********************** STARTING REPORT GEN V1")
+logging.info(f"********************** STARTING REPORT GEN - BASE X ROLE")
 print("Starting Report Gen...")
 # endregion
 
@@ -32,15 +32,17 @@ logging.info(f"Runtime: {today}")
 yesterday = y.strftime("%Y%m%d")
 
 # PATHS
+#rawpath = "/var/www/html/TierData/json"
+#csvpath = "/var/www/html/TierData/backfill"
+#imgsrc = "/root/MLBB-StatReport/heroes"
+#reportout = "/var/www/html/output/report/baseXrole"
+
+# DEVPATHS
 rawpath = "/Users/phunr/var/www/html/TierData/json"
 csvpath = "/Users/phunr/var/www/html/TierData/backfill"
-outpath = "/Users/phunr/var/www/html/output/sum"
-avgoutpath = "/Users/phunr/var/www/html/output/avg"
 imgsrc = "/Users/phunr/PycharmProjects/MLBB-StatReport/heroes"
+reportout = "/Users/phunr/var/www/html/output/report/baseXrole"
 
-# report vars
-reportout = "/Users/phunr/var/www/html/output/report"
-src = "/Users/phunr/var/www/html/src"
 
 # GENERATE FOLDER LISTS
 print("Checking Folder Paths...")
@@ -105,8 +107,13 @@ for bfolder in bfruntimes:
     # print('Total:',(totalBDir + totalBFiles))
 
 # Generate Folders
+if not os.path.exists(reportout):
+    os.system(f"mkdir {reportout}")
+    print(f"Making Folder: {reportout}")
+    logging.info(f"Making Folder: {reportout}")
+
 for r in region:
-    outputcheck = f"{outpath}/{r}"
+    outputcheck = f"{reportout}/{r}"
     if not os.path.exists(outputcheck):
         os.system(f"mkdir {outputcheck}")
         print(f"Making Folder: {outputcheck}")
@@ -132,37 +139,10 @@ for r in region:
             else:
                 #print(f"Exists: {loutputcheck}")
                 logging.info(f"Exists: {loutputcheck}")
-# Generate Folders (Averages)
-for r in region:
-    avgoutputcheck = f"{avgoutpath}/{r}"
-    if not os.path.exists(avgoutputcheck):
-        os.system(f"mkdir {avgoutputcheck}")
-        print(f"Making Folder: {avgoutputcheck}")
-        logging.info(f"Making Folder: {avgoutputcheck}")
-    else:
-        #print(f"Exists: {avgoutputcheck}")
-        logging.info(f"Exists: {avgoutputcheck}")
-    for m in mode:
-        avgmoutputcheck = f"{avgoutputcheck}/{m}"
-        if not os.path.exists(avgmoutputcheck):
-            os.system(f"mkdir {avgmoutputcheck}")
-            print(f"Making Folder: {avgmoutputcheck}")
-            logging.info(f"Making Folder: {avgmoutputcheck}")
-        else:
-            #print(f"Exists: {avgmoutputcheck}")
-            logging.info(f"Exists: {avgmoutputcheck}")
-        for lvl in level:
-            avgloutputcheck = f"{avgmoutputcheck}/{lvl}"
-            if not os.path.exists(avgloutputcheck):
-                os.system(f"mkdir {avgloutputcheck}")
-                print(f"Making Folder: {avgloutputcheck}")
-                logging.info(f"Making Folder: {avgloutputcheck}")
-            else:
-                #print(f"Exists: {avgloutputcheck}")
-                logging.info(f"Exists: {avgloutputcheck}")
+
 # endregion
 
-# region TIMELINE
+# region TIMELINE GEN
 print("Compiling Lookup...")
 logging.info("Compiling Lookup")
 
@@ -349,12 +329,12 @@ for l in lang:
 
                             # file output
                             #plt.show()
-                            op = f"{reportout}/{r}.{m}.{lvl}.{p}.{c}.png"
+                            op = f"{reportout}/{r}/{m}/{lvl}/{p}.{c}.png"
                             plt.savefig(op, transparent=False, bbox_inches="tight")
                             print(f"Combined Image: {op}")
                             logging.info(f"Combined Image: {op}")
 
-                            #plt.close('all')
+                            plt.close('all')
                         #input("Press Enter to continue...")
 
 

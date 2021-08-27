@@ -32,16 +32,16 @@ logging.info(f"Runtime: {today}")
 yesterday = y.strftime("%Y%m%d")
 
 # PATHS
-#rawpath = "/var/www/html/TierData/json"
-#csvpath = "/var/www/html/TierData/backfill"
-#imgsrc = "/root/MLBB-StatReport/heroes"
-#reportout = "/var/www/html/output/report/baseXrole"
+rawpath = "/var/www/html/TierData/json"
+csvpath = "/var/www/html/TierData/backfill"
+imgsrc = "/root/MLBB-StatReport/heroes"
+reportout = "/var/www/html/output/report/baseXrole"
 
 # DEVPATHS
-rawpath = "/Users/phunr/var/www/html/TierData/json"
-csvpath = "/Users/phunr/var/www/html/TierData/backfill"
-imgsrc = "/Users/phunr/PycharmProjects/MLBB-StatReport/heroes"
-reportout = "/Users/phunr/var/www/html/output/report/baseXrole"
+#rawpath = "/Users/phunr/var/www/html/TierData/json"
+#csvpath = "/Users/phunr/var/www/html/TierData/backfill"
+#imgsrc = "/Users/phunr/PycharmProjects/MLBB-StatReport/heroes"
+#reportout = "/Users/phunr/var/www/html/output/report/baseXrole"
 
 
 # GENERATE FOLDER LISTS
@@ -142,7 +142,7 @@ for r in region:
 
 # endregion
 
-# region TIMELINE
+# region TIMELINE GEN
 print("Compiling Lookup...")
 logging.info("Compiling Lookup")
 
@@ -334,7 +334,7 @@ for l in lang:
                             print(f"Combined Image: {op}")
                             logging.info(f"Combined Image: {op}")
 
-                            #plt.close('all')
+                            plt.close('all')
                         #input("Press Enter to continue...")
 
 
