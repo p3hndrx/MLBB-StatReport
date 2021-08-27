@@ -7,9 +7,9 @@ from os.path import exists
 import json
 import pandas as pd
 import matplotlib.pyplot as plt
-from matplotlib.gridspec import GridSpec
 from matplotlib.offsetbox import TextArea, DrawingArea, OffsetImage, AnnotationBbox
 from matplotlib.cbook import get_sample_data
+from matplotlib import dates as mdates
 
 import logging
 import roles
@@ -246,32 +246,35 @@ for l in lang:
                     print(f"Combined CSV: {reportout}/{r}.{m}.{lvl}.csv")
                     logging.info(f"Combined CSV: {reportout}/{r}.{m}.{lvl}.csv")
                     #input("Press Enter to continue...")
-    '''
+
     #TEST MAIN OUT
-    print(f"{dfx}")
-    dfx.to_csv(f"{reportout}/master.csv", index=False)
-    print(f"Combined CSV: {reportout}/master.csv")
-    logging.info(f"Combined CSV: {reportout}/master.csv")
-    input("Press Enter to continue...")
-    '''
+    #print(f"{dfx}")
+    #dfx.to_csv(f"{reportout}/master.csv", index=False)
+    #print(f"Combined CSV: {reportout}/master.csv")
+    #logging.info(f"Combined CSV: {reportout}/master.csv")
+    #input("Press Enter to continue...")
+
+                    fig, ax = plt.subplots(facecolor='darkslategrey')
+                    plt.style.use('dark_background')
 
                     for p in prof:
                         print(f"Cycling Roles...{r}.{m}.{lvl}.{p}:")
+                        logging.info(f"Cycling Roles...{r}.{m}.{lvl}.{p}:")
 
                         rslt = getattr(roles, p)
                         dfp = dfx[dfx['name'].isin(rslt)]
-                        print(f"{dfp}")
+                        #print(f"{dfp}")
 
                         #FILTER top 5:
                         latest = dfp['runtime'].iloc[-1]
 
                         for c in crit:
-                            fig, ax = plt.subplots(facecolor='darkslategrey')
-                            plt.style.use('dark_background')
+
                             d = latest.strftime("%m/%d/%Y")
 
                             #Get top heroes by each criteria
                             print(f"Last Date: {latest}; Top: {c}")
+                            logging.info(f"Last Date: {latest}; Top: {c}")
                             rslt_df = dfp[dfp['runtime'] == latest]
                             rslt_df = rslt_df.sort_values(by=[str(c)],ascending=False).head(5)
                             rslt_df = rslt_df[['name', 'win','use','kda']]
@@ -283,24 +286,9 @@ for l in lang:
                             elif c == "use":
                                 clabel = "Use%"
 
-                            print(f"{rslt_df}")
+                            #print(f"{rslt_df}")
 
 
-                            #TABLE PLOT
-                            '''
-                            plt.suptitle(
-                                f'Top 5 {p} by {clabel}\nRegion: {r}, Elo: {lvl}, Mode:{m}\n As of {d}',
-                                fontsize=12,
-                                fontname='monospace')
-                            plt.style.use('dark_background')
-                            plt.axis('off')
-                            table = ax.table(cellText=rslt_df.values, colLabels=rslt_df.columns, loc='center')
-
-                            op = f"{reportout}/{r}.{m}.{lvl}.{p}.{c}-table.png"
-                            print(f"Combined Image: {op}")
-                            plt.savefig(op, transparent=False, bbox_inches="tight")
-                            input("Press Enter to continue...")
-                            '''
 
                             top = rslt_df['name'].tolist()
                             #print(f"{top}")
@@ -310,7 +298,10 @@ for l in lang:
 
 
                             # HISTORICAL GRAPH PLOT
-                            dfc.pivot(index='runtime', columns='name', values=c).plot(figsize=(5, 5), marker='o',linewidth=2)
+                            fig, ax = plt.subplots(facecolor='darkslategrey')
+                            plt.style.use('dark_background')
+
+                            dfc.pivot(index='runtime', columns='name', values=c).plot(figsize=(10, 5), marker='o',linewidth=2,ax=ax)
                             plt.xticks(rotation=15)
                             p = p.capitalize()
                             plt.suptitle(
@@ -322,25 +313,39 @@ for l in lang:
 
                             # LABEL
                             print("Generating Labels...")
+                            logging.info(f"Generating Labels...")
                             for hero in top:
                                 shero = hero.replace("-", "").replace("'", "").replace(".", "").replace(" ", "").lower()
                                 print(f"Searching {shero} from {hero}")
                                 logging.debug(f"Searching {shero} from {hero}")
-                                fn = get_sample_data(f"{imgsrc}/{shero}.png", asfileobj=False)
-                                arr_img = plt.imread(fn, format='png')
+
 
                                 #Generate Coordinates
-                                xy = (latest, 0.7)
+                                #search
+                                dfh = rslt_df[rslt_df['name']==hero]
+                                val = dfh[str(c)].values[0]
+                                xy = (d, val)
 
-                            '''#subplots
-                            n = len(pd.unique(dfc['name']))
-                            fig, ax = plt.subplots(nrows=n, sharex=True)
-                            #dfc.pivot(index='runtime', columns='name', values=c).plot(subplots=True, layout=(n, 1), figsize=(6, 9), marker='o',linewidth=2)
-                            for i, name in enumerate(dfc['name'].unique(), 0):
-                                df_filtered = dfc[dfc['name'] == name]
-                                ax[i].plot(df_filtered['runtime'], df_filtered[str(c)], marker='o', linewidth=2)
-                                ax[i].set_ylabel(name)
-                            '''
+                                fn = get_sample_data(f"{imgsrc}/{shero}.png", asfileobj=False)
+                                arr_img = plt.imread(fn, format='png')
+                                imagebox = OffsetImage(arr_img, zoom=0.125)
+                                imagebox.image.axes = ax
+
+                                print(fn)
+                                ab = AnnotationBbox(imagebox, xy,
+                                                    xybox=(15.,0),
+                                                    xycoords='data',
+                                                    boxcoords="offset points",
+                                                    pad=0,
+                                                    frameon=False
+                                                    )
+                                logging.info(f"Coord: {xy}")
+                                print(f"Coord: {xy}")
+                                ax.add_artist(ab)
+
+                                # Fix the display limits to see everything
+                                #ax.set_xlim(0, 1)
+                                #ax.set_ylim(0, 1)
 
                             # file output
                             #plt.show()
@@ -349,12 +354,12 @@ for l in lang:
                             print(f"Combined Image: {op}")
                             logging.info(f"Combined Image: {op}")
 
-                            plt.close('all')
-                        input("Press Enter to continue...")
+                            #plt.close('all')
+                        #input("Press Enter to continue...")
 
 
 # endregion
 
 # region CLOSE-FOOTER
-logging.info(f"************ SUMMARY GEN COMPLETED")
+logging.info(f"************ REPORT GEN COMPLETED")
 # endregion
