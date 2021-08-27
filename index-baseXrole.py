@@ -7,17 +7,20 @@ from os.path import exists
 import json
 import pandas as pd
 import matplotlib.pyplot as plt
+from matplotlib.offsetbox import TextArea, DrawingArea, OffsetImage, AnnotationBbox
+from matplotlib.cbook import get_sample_data
+from matplotlib import dates as mdates
 
 import logging
-
 import roles
+import heroicons
 
 # endregion
 
 # region ENVIRONMENT
-logging.basicConfig(filename="/tmp/sync-reportgen.log", level=logging.DEBUG,
+logging.basicConfig(filename="/tmp/sync-reportgen-type1.log", level=logging.DEBUG,
                     format="%(asctime)s:%(levelname)s:%(message)s")
-logging.info(f"********************** STARTING REPORT GEN V1")
+logging.info(f"********************** STARTING REPORT GEN - BASE X ROLE")
 print("Starting Report Gen...")
 # endregion
 
@@ -29,14 +32,17 @@ logging.info(f"Runtime: {today}")
 yesterday = y.strftime("%Y%m%d")
 
 # PATHS
+#rawpath = "/var/www/html/TierData/json"
+#csvpath = "/var/www/html/TierData/backfill"
+#imgsrc = "/root/MLBB-StatReport/heroes"
+#reportout = "/var/www/html/output/report/baseXrole"
+
+# DEVPATHS
 rawpath = "/Users/phunr/var/www/html/TierData/json"
 csvpath = "/Users/phunr/var/www/html/TierData/backfill"
-outpath = "/Users/phunr/var/www/html/output/sum"
-avgoutpath = "/Users/phunr/var/www/html/output/avg"
+imgsrc = "/Users/phunr/PycharmProjects/MLBB-StatReport/heroes"
+reportout = "/Users/phunr/var/www/html/output/report/baseXrole"
 
-# report vars
-reportout = "/Users/phunr/var/www/html/output/report"
-src = "/Users/phunr/var/www/html/src"
 
 # GENERATE FOLDER LISTS
 print("Checking Folder Paths...")
@@ -52,6 +58,7 @@ bfruntimes = sorted(bfruntimes, reverse=True)
 logging.info(f"Crawl BackFill Runtimes: {bfruntimes}")
 
 # DATASETS
+crit = ['win','use','kda']
 lang = ["en"]
 region = ["all", "NA", "EU", "SA", "SE"]
 dtrange = ["Week"]
@@ -100,8 +107,13 @@ for bfolder in bfruntimes:
     # print('Total:',(totalBDir + totalBFiles))
 
 # Generate Folders
+if not os.path.exists(reportout):
+    os.system(f"mkdir {reportout}")
+    print(f"Making Folder: {reportout}")
+    logging.info(f"Making Folder: {reportout}")
+
 for r in region:
-    outputcheck = f"{outpath}/{r}"
+    outputcheck = f"{reportout}/{r}"
     if not os.path.exists(outputcheck):
         os.system(f"mkdir {outputcheck}")
         print(f"Making Folder: {outputcheck}")
@@ -127,37 +139,10 @@ for r in region:
             else:
                 #print(f"Exists: {loutputcheck}")
                 logging.info(f"Exists: {loutputcheck}")
-# Generate Folders (Averages)
-for r in region:
-    avgoutputcheck = f"{avgoutpath}/{r}"
-    if not os.path.exists(avgoutputcheck):
-        os.system(f"mkdir {avgoutputcheck}")
-        print(f"Making Folder: {avgoutputcheck}")
-        logging.info(f"Making Folder: {avgoutputcheck}")
-    else:
-        #print(f"Exists: {avgoutputcheck}")
-        logging.info(f"Exists: {avgoutputcheck}")
-    for m in mode:
-        avgmoutputcheck = f"{avgoutputcheck}/{m}"
-        if not os.path.exists(avgmoutputcheck):
-            os.system(f"mkdir {avgmoutputcheck}")
-            print(f"Making Folder: {avgmoutputcheck}")
-            logging.info(f"Making Folder: {avgmoutputcheck}")
-        else:
-            #print(f"Exists: {avgmoutputcheck}")
-            logging.info(f"Exists: {avgmoutputcheck}")
-        for lvl in level:
-            avgloutputcheck = f"{avgmoutputcheck}/{lvl}"
-            if not os.path.exists(avgloutputcheck):
-                os.system(f"mkdir {avgloutputcheck}")
-                print(f"Making Folder: {avgloutputcheck}")
-                logging.info(f"Making Folder: {avgloutputcheck}")
-            else:
-                #print(f"Exists: {avgloutputcheck}")
-                logging.info(f"Exists: {avgloutputcheck}")
+
 # endregion
 
-# region TIMELINE + AVERAGES
+# region TIMELINE
 print("Compiling Lookup...")
 logging.info("Compiling Lookup")
 
@@ -192,7 +177,6 @@ for l in lang:
                             dfc = dfc[['name', 'win', 'use', 'kda']]
                             dfc['win'] = dfc['win'].str.rstrip('%').astype('float')
                             dfc['use'] = dfc['use'].str.rstrip('%').astype('float')
-                            # df['win'] = pd.to_numeric(df['win'])
                             dfc['runtime'] = f"{pt}"
                             dfc['runtime'] = dfc['runtime'].astype('datetime64[ns]')
                             dfc['region'] = f"{r}"
@@ -234,7 +218,7 @@ for l in lang:
                     logging.info(f"Combined CSV: {reportout}/{r}.{m}.{lvl}.csv")
                     dfx.drop(dfx[dfx['win'] == 100].index, inplace=True)
                     dfx.drop(dfx[dfx['use'] <= .001].index, inplace=True)
-                    dfx.drop(dfx[dfx['kda'] >= 20].index, inplace=True)
+                    dfx.drop(dfx[dfx['kda'] >= 10].index, inplace=True)
 
                     # TEST OUT TO CSV
                     print(f"Source Table... \n{dfx}")
@@ -242,6 +226,7 @@ for l in lang:
                     print(f"Combined CSV: {reportout}/{r}.{m}.{lvl}.csv")
                     logging.info(f"Combined CSV: {reportout}/{r}.{m}.{lvl}.csv")
                     #input("Press Enter to continue...")
+
     #TEST MAIN OUT
     #print(f"{dfx}")
     #dfx.to_csv(f"{reportout}/master.csv", index=False)
@@ -249,54 +234,31 @@ for l in lang:
     #logging.info(f"Combined CSV: {reportout}/master.csv")
     #input("Press Enter to continue...")
 
+                    fig, ax = plt.subplots(facecolor='darkslategrey')
+                    plt.style.use('dark_background')
 
                     for p in prof:
                         print(f"Cycling Roles...{r}.{m}.{lvl}.{p}:")
-                        report = "\n"
+                        logging.info(f"Cycling Roles...{r}.{m}.{lvl}.{p}:")
+
                         rslt = getattr(roles, p)
                         dfp = dfx[dfx['name'].isin(rslt)]
-                        print(f"{dfp}")
+                        #print(f"{dfp}")
 
                         #FILTER top 5:
-                        crit = ['win','use','kda']
                         latest = dfp['runtime'].iloc[-1]
 
                         for c in crit:
+
+                            d = latest.strftime("%m/%d/%Y")
+
                             #Get top heroes by each criteria
                             print(f"Last Date: {latest}; Top: {c}")
+                            logging.info(f"Last Date: {latest}; Top: {c}")
                             rslt_df = dfp[dfp['runtime'] == latest]
                             rslt_df = rslt_df.sort_values(by=[str(c)],ascending=False).head(5)
-                            #print(f"{rslt_df}")
-
                             rslt_df = rslt_df[['name', 'win','use','kda']]
-                            fig, ax = plt.subplots()
-                            table = ax.table(cellText=rslt_df.values, colLabels=rslt_df.columns, loc='center')
-                            #input("Press Enter to continue...")
 
-                            top = rslt_df['name'].tolist()
-                            print(f"{top}")
-                            dfc = dfp[dfp['name'].isin(top)]
-                            dfc.sort_values(by=[str(c)], ascending=1)
-                            #input("Press Enter to continue...")
-
-                            #Graph:
-                            print(f"Charting Changes...{r}.{m}.{lvl}.{p}: by {c}")
-                            plt.style.use('dark_background')
-                            op = f"{reportout}/{r}.{m}.{lvl}.{p}.{c}.png"
-
-
-                            # all in one
-                            dfc.pivot(index='runtime', columns='name', values=c).plot(figsize=(9, 6), marker='o',linewidth=2)
-
-                            '''#subplots
-                            n = len(pd.unique(dfc['name']))
-                            fig, ax = plt.subplots(nrows=n, sharex=True)
-                            #dfc.pivot(index='runtime', columns='name', values=c).plot(subplots=True, layout=(n, 1), figsize=(6, 9), marker='o',linewidth=2)
-                            for i, name in enumerate(dfc['name'].unique(), 0):
-                                df_filtered = dfc[dfc['name'] == name]
-                                ax[i].plot(df_filtered['runtime'], df_filtered[str(c)], marker='o', linewidth=2)
-                                ax[i].set_ylabel(name)
-                            '''
                             if c == "win":
                                 clabel = "WinRate%"
                             elif c == "kda":
@@ -304,23 +266,80 @@ for l in lang:
                             elif c == "use":
                                 clabel = "Use%"
 
+                            #print(f"{rslt_df}")
+
+
+
+                            top = rslt_df['name'].tolist()
+                            #print(f"{top}")
+                            dfc = dfp[dfp['name'].isin(top)]
+                            dfc.sort_values(by=[str(c)], ascending=1)
+                            #input("Press Enter to continue...")
+
+
+                            # HISTORICAL GRAPH PLOT
+                            fig, ax = plt.subplots(facecolor='darkslategrey')
                             plt.style.use('dark_background')
+
+                            dfc.pivot(index='runtime', columns='name', values=c).plot(figsize=(10, 5), marker='o',linewidth=2,ax=ax)
                             plt.xticks(rotation=15)
-                            plt.suptitle(f'Historical Data for Top 5 {p} by {clabel}\nRegion: {r}, Elo: {lvl}, Mode:{m}', fontsize=12,
-                                     fontname='monospace')
+                            p = p.capitalize()
+                            plt.suptitle(
+                                f'Historical Top 5 {p} by {clabel} (As of {d})\nRegion: {r}, Elo: {lvl}, Mode:{m}',
+                                fontsize=12,
+                                fontname='monospace')
+                            plt.legend(loc=2)
 
 
+                            # LABEL
+                            print("Generating Labels...")
+                            logging.info(f"Generating Labels...")
+                            for hero in top:
+                                shero = hero.replace("-", "").replace("'", "").replace(".", "").replace(" ", "").lower()
+                                print(f"Searching {shero} from {hero}")
+                                logging.debug(f"Searching {shero} from {hero}")
+
+
+                                #Generate Coordinates
+                                #search
+                                dfh = rslt_df[rslt_df['name']==hero]
+                                val = dfh[str(c)].values[0]
+                                xy = (d, val)
+
+                                fn = get_sample_data(f"{imgsrc}/{shero}.png", asfileobj=False)
+                                arr_img = plt.imread(fn, format='png')
+                                imagebox = OffsetImage(arr_img, zoom=0.125)
+                                imagebox.image.axes = ax
+
+                                print(fn)
+                                ab = AnnotationBbox(imagebox, xy,
+                                                    xybox=(15.,0),
+                                                    xycoords='data',
+                                                    boxcoords="offset points",
+                                                    pad=0,
+                                                    frameon=False
+                                                    )
+                                logging.info(f"Coord: {xy}")
+                                print(f"Coord: {xy}")
+                                ax.add_artist(ab)
+
+                                # Fix the display limits to see everything
+                                #ax.set_xlim(0, 1)
+                                #ax.set_ylim(0, 1)
+
+                            # file output
+                            #plt.show()
+                            op = f"{reportout}/{r}/{m}/{lvl}/{p}.{c}.png"
+                            plt.savefig(op, transparent=False, bbox_inches="tight")
                             print(f"Combined Image: {op}")
                             logging.info(f"Combined Image: {op}")
-                            # file output
-                            plt.show()
-                            #plt.savefig(op, transparent=False, bbox_inches="tight")
-                            plt.close('all')
-                            input("Press Enter to continue...")
+
+                            #plt.close('all')
+                        #input("Press Enter to continue...")
 
 
 # endregion
 
 # region CLOSE-FOOTER
-logging.info(f"************ SUMMARY GEN COMPLETED")
+logging.info(f"************ REPORT GEN COMPLETED")
 # endregion
