@@ -18,9 +18,9 @@ import heroicons
 # endregion
 
 # region ENVIRONMENT
-logging.basicConfig(filename="/tmp/sync-reportgen-type1.log", level=logging.DEBUG,
+logging.basicConfig(filename="/tmp/sync-reportgen-type2.log", level=logging.DEBUG,
                     format="%(asctime)s:%(levelname)s:%(message)s")
-logging.info(f"********************** STARTING REPORT GEN - BASE X ROLE")
+logging.info(f"********************** STARTING REPORT GEN - BASE X ROLE-BOX")
 print("Starting Report Gen...")
 # endregion
 
@@ -41,7 +41,7 @@ yesterday = y.strftime("%Y%m%d")
 rawpath = "/Users/phunr/var/www/html/TierData/json"
 csvpath = "/Users/phunr/var/www/html/TierData/backfill"
 imgsrc = "/Users/phunr/PycharmProjects/MLBB-StatReport/heroes"
-reportout = "/Users/phunr/var/www/html/output/report/baseXrole"
+reportout = "/Users/phunr/var/www/html/output/report/baseXrole-box"
 
 
 # GENERATE FOLDER LISTS
@@ -281,8 +281,11 @@ for l in lang:
                             fig, ax = plt.subplots(facecolor='darkslategrey')
                             plt.style.use('dark_background')
 
-                            dfc.pivot(index='runtime', columns='name', values=c).plot(figsize=(10, 5), marker='o',linewidth=2,ax=ax)
-                            plt.xticks(rotation=15)
+                            #dfc.pivot(index='runtime', columns='name', values=c).plot(figsize=(10, 5), marker='o',linewidth=2,ax=ax)
+                            #plt.xticks(rotation=15)
+
+                            dfc.pivot(index='runtime', columns='name', values=c).boxplot(figsize=(10, 5), marker='o',linewidth=2,ax=ax)
+
                             p = p.capitalize()
                             plt.suptitle(
                                 f'Historical Top 5 {p} by {clabel} (As of {d})\nRegion: {r}, Elo: {lvl}, Mode:{m}',
@@ -335,7 +338,7 @@ for l in lang:
                             logging.info(f"Combined Image: {op}")
 
                             plt.close('all')
-                        #input("Press Enter to continue...")
+                        input("Press Enter to continue...")
 
 
 # endregion
