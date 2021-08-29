@@ -286,7 +286,7 @@ for l in lang:
                             plt.xticks(rotation=15)
 
                             p = p.capitalize()
-                            r = r.capitalize()
+                            #r = r.capitalize()
                             plt.title(
                                 f'Top {p} by {clabel} (As of {d})\nRegion: {r}, Elo: {lvl}, Mode:{m}',
                                 fontsize=12,

@@ -273,7 +273,7 @@ for l in lang:
                         plt.xticks(rotation=15)
 
                         md = md.capitalize()
-                        r = r.capitalize()
+                        #r = r.capitalize()
                         plt.title(
                             f'Top Heroes in {md} by {clabel} (As of {d})\nRegion: {r}, Elo: {l}',
                             fontsize=12,
