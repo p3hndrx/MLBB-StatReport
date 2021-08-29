@@ -35,7 +35,7 @@ yesterday = y.strftime("%Y%m%d")
 #rawpath = "/var/www/html/TierData/json"
 #csvpath = "/var/www/html/TierData/backfill"
 #imgsrc = "/root/MLBB-StatReport/heroes"
-#reportout = "/var/www/html/output/report/baseXrole"
+#reportout = "/var/www/html/reports/baseXrole"
 
 # DEVPATHS
 rawpath = "/Users/phunr/var/www/html/TierData/json"
