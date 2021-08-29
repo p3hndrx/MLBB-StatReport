@@ -281,7 +281,7 @@ for l in lang:
                             fig, ax = plt.subplots(facecolor='darkslategrey')
                             plt.style.use('dark_background')
 
-                            dfc.pivot(index='runtime', columns='name', values=c).plot(figsize=(10, 5), marker='o',linewidth=2,ax=ax)
+                            dfc.pivot(index='runtime', columns='name', values=c).plot(figsize=(5, 5), marker='o',linewidth=2,ax=ax)
                             plt.xticks(rotation=15)
                             p = p.capitalize()
                             plt.suptitle(
