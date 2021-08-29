@@ -275,7 +275,7 @@ for l in lang:
                         plt.xticks(rotation=15)
                         md = md.capitalize()
                         plt.suptitle(
-                            f'Top 5 Heroes in {md} by {clabel} (As of {d})\nRegion: {r}, Elo: {lvl}',
+                            f'Top 5 Heroes in {md} by {clabel} (As of {d})\nRegion: {r}, Elo: {l}',
                             fontsize=12,
                             fontname='monospace')
                         plt.legend(loc=2)
