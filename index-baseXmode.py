@@ -274,6 +274,7 @@ for l in lang:
                         dfc.pivot(index='runtime', columns='name', values=c).plot(figsize=(10, 5), marker='o',linewidth=2,ax=ax)
                         plt.xticks(rotation=15)
                         md = md.capitalize()
+                        r = r.capitalize()
                         plt.suptitle(
                             f'Top 5 Heroes in {md} by {clabel} (As of {d})\nRegion: {r}, Elo: {l}',
                             fontsize=12,

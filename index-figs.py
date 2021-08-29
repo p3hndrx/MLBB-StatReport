@@ -18,9 +18,9 @@ import heroicons
 # endregion
 
 # region ENVIRONMENT
-logging.basicConfig(filename="/tmp/sync-reportgen-type3.log", level=logging.DEBUG,
+logging.basicConfig(filename="/tmp/sync-reportgen-type4.log", level=logging.DEBUG,
                     format="%(asctime)s:%(levelname)s:%(message)s")
-logging.info(f"********************** STARTING REPORT GEN - BASE X MODE")
+logging.info(f"********************** STARTING REPORT GEN - BASE X MODE-BOX")
 print("Starting Report Gen...")
 # endregion
 
@@ -41,7 +41,7 @@ yesterday = y.strftime("%Y%m%d")
 rawpath = "/Users/phunr/var/www/html/TierData/json"
 csvpath = "/Users/phunr/var/www/html/TierData/backfill"
 imgsrc = "/Users/phunr/PycharmProjects/MLBB-StatReport/heroes"
-reportout = "/Users/phunr/var/www/html/output/report/baseXmode"
+reportout = "/Users/phunr/var/www/html/output/report/baseXmode-box"
 
 
 # GENERATE FOLDER LISTS
@@ -246,7 +246,7 @@ for l in lang:
                         print(f"Last Date: {latest}; Top: {c}")
                         logging.info(f"Last Date: {latest}; Top: {c}")
                         rslt_df = dfl[dfl['runtime'] == latest]
-                        rslt_df = rslt_df.sort_values(by=[str(c)],ascending=False).head(5)
+                        rslt_df = rslt_df.sort_values(by=[str(c)],ascending=False).head(10)
                         rslt_df = rslt_df[['name','win','use','kda']]
 
                         if c == "win":
@@ -263,70 +263,58 @@ for l in lang:
                         dfc = dfl[dfl['name'].isin(top)]
                         dfc.sort_values(by=[str(c)], ascending=1)
 
-                        #print(f"{dfc}")
-                        #input("Press Enter to continue...")
-
-
-                        # HISTORICAL GRAPH PLOT
+                        # BOX GRAPH PLOT
                         fig, ax = plt.subplots(facecolor='darkslategrey')
                         plt.style.use('dark_background')
 
-                        dfc.pivot(index='runtime', columns='name', values=c).plot(figsize=(10, 5), marker='o',linewidth=2,ax=ax)
+                        ax = dfc.boxplot(column=str(c), by=['name'], ax=ax, showmeans=True, fontsize=8, grid=False,
+                                         positions=range(len(top)))
+                        ax.set(xlabel=None, title=None)
                         plt.xticks(rotation=15)
+
                         md = md.capitalize()
-                        plt.suptitle(
-                            f'Top 5 Heroes in {md} by {clabel} (As of {d})\nRegion: {r}, Elo: {lvl}',
+                        r = r.capitalize()
+                        plt.title(
+                            f'Top Heroes in {md} by {clabel} (As of {d})\nRegion: {r}, Elo: {l}',
                             fontsize=12,
                             fontname='monospace')
-                        plt.legend(loc=2)
-                        #ax.xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m'))
-
+                        plt.suptitle('')
 
                         # LABEL
                         print("Generating Labels...")
                         logging.info(f"Generating Labels...")
-                        for hero in top:
-                            shero = hero.replace("-", "").replace("'", "").replace(".", "").replace(" ", "").lower()
-                            print(f"Searching {shero} from {hero}")
-                            logging.debug(f"Searching {shero} from {hero}")
-    
-    
-                            #Generate Coordinates
-                            #search
-                            dfh = rslt_df[rslt_df['name']==hero]
-                            val = dfh[str(c)].values[0]
-                            xy = (d, val)
-    
-                            fn = get_sample_data(f"{imgsrc}/{shero}.png", asfileobj=False)
+
+                        # move the xtick labels
+                        ax.set_xticks(range(len(top)))
+                        ax.tick_params(axis='x', which='major', pad=20)
+
+                        # use the ytick values to locate the image
+
+                        y = ax.get_xticks()[0]
+                        # print(f"{y}")
+
+                        for i, (name, data) in enumerate(dfc.groupby('name')):
+                            xy = (i, y)
+
+                            shero = name.replace("-", "").replace("'", "").replace(".", "").replace(" ", "").lower()
+                            fn = f"{imgsrc}/{shero}.png"  # path to file
                             arr_img = plt.imread(fn, format='png')
                             imagebox = OffsetImage(arr_img, zoom=0.125)
                             imagebox.image.axes = ax
-    
-                            print(fn)
-                            ab = AnnotationBbox(imagebox, xy,
-                                                xybox=(15.,0),
-                                                xycoords='data',
-                                                boxcoords="offset points",
-                                                pad=0,
-                                                frameon=False
-                                                )
-                            logging.info(f"Coord: {xy}")
-                            print(f"Coord: {xy}")
+
+                            trans = ax.get_xaxis_transform()
+                            ab = AnnotationBbox(imagebox, xy, xybox=(0, -15), xycoords=trans, boxcoords="offset points",
+                                                pad=0, frameon=False)
                             ax.add_artist(ab)
-    
-                            # Fix the display limits to see everything
-                            #ax.set_xlim(0, 1)
-                            #ax.set_ylim(0, 1)
 
                         # file output
-                        #plt.show()
+                        # plt.show()
                         op = f"{reportout}/{r}/{l}/{md}.{c}.png"
                         plt.savefig(op, transparent=False, bbox_inches="tight")
                         print(f"Combined Image: {op}")
                         logging.info(f"Combined Image: {op}")
 
                         plt.close('all')
-                        #input("Press Enter to continue...")
 
 
 # endregion
