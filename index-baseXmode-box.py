@@ -207,9 +207,12 @@ for l in lang:
                     #Remove Outliers
                     print(f"Removing Outliers...")
                     logging.info(f"Combined CSV: {reportout}/{r}.{m}.{lvl}.csv")
-                    dfx.drop(dfx[dfx['win'] == 100].index, inplace=True)
-                    dfx.drop(dfx[dfx['use'] <= .001].index, inplace=True)
-                    dfx.drop(dfx[dfx['kda'] >= 10].index, inplace=True)
+                    # dfx.drop(dfx[dfx['win'] == 100].index, inplace=True)
+                    # dfx.drop(dfx[dfx['use'] <= .001].index, inplace=True)
+                    # dfx.drop(dfx[dfx['kda'] >= 20].index, inplace=True)
+                    dfx = dfx[dfx.use >= .001]
+                    dfx = dfx[dfx.win != 100]
+                    dfx = dfx[dfx.kda <= 20]
 
             # TEST OUT TO CSV
             print(f"Source Table... \n{dfx}")

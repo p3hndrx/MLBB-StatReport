@@ -177,6 +177,7 @@ for l in lang:
                             dfc = dfc[['name', 'win', 'use', 'kda']]
                             dfc['win'] = dfc['win'].str.rstrip('%').astype('float')
                             dfc['use'] = dfc['use'].str.rstrip('%').astype('float')
+                            #dfc['kda'] = dfc['kda'].astype('float')
                             dfc['runtime'] = f"{pt}"
                             dfc['runtime'] = dfc['runtime'].astype('datetime64[ns]')
                             dfc['region'] = f"{r}"
@@ -202,6 +203,7 @@ for l in lang:
                                 df = pd.DataFrame(rows, columns=['name', 'win', 'use', 'kda'])
                                 df['win'] = df['win'].str.rstrip('%').astype('float')
                                 df['use'] = df['use'].str.rstrip('%').astype('float')
+                                #df['kda'] = df['kda'].astype('float')
                                 df['runtime'] = f"{pt}"
                                 df['runtime'] = df['runtime'].astype('datetime64[ns]')
                                 df['region'] = f"{r}"
@@ -214,11 +216,15 @@ for l in lang:
                             logging.warning(f"Bad Request: Missing: {jsonfile}")
 
                     #Remove Outliers
+                    print(f"Source Table (PRE)... \n{dfx}")
                     print(f"Removing Outliers...")
                     logging.info(f"Combined CSV: {reportout}/{r}.{m}.{lvl}.csv")
-                    dfx.drop(dfx[dfx['win'] == 100].index, inplace=True)
-                    dfx.drop(dfx[dfx['use'] <= .001].index, inplace=True)
-                    dfx.drop(dfx[dfx['kda'] >= 10].index, inplace=True)
+                    #dfx.drop(dfx[dfx['win'] == 100].index, inplace=True)
+                    #dfx.drop(dfx[dfx['use'] <= .001].index, inplace=True)
+                    #dfx.drop(dfx[dfx['kda'] >= 20].index, inplace=True)
+                    dfx = dfx[dfx.use >= .001]
+                    dfx = dfx[dfx.win != 100]
+                    dfx = dfx[dfx.kda <= 20]
 
                     # TEST OUT TO CSV
                     print(f"Source Table... \n{dfx}")
@@ -256,6 +262,7 @@ for l in lang:
                             print(f"Last Date: {latest}; Top: {c}")
                             logging.info(f"Last Date: {latest}; Top: {c}")
                             rslt_df = dfp[dfp['runtime'] == latest]
+                            print(f"{rslt_df}")
                             rslt_df = rslt_df.sort_values(by=[str(c)],ascending=False).head(5)
                             rslt_df = rslt_df[['name', 'win','use','kda']]
 
@@ -281,7 +288,7 @@ for l in lang:
                             fig, ax = plt.subplots(facecolor='darkslategrey')
                             plt.style.use('dark_background')
 
-                            dfc.pivot(index='runtime', columns='name', values=c).plot(figsize=(5, 5), marker='o',linewidth=2,ax=ax)
+                            dfc.pivot(index='runtime', columns='name', values=c).plot(figsize=(10, 5), marker='o',linewidth=2,ax=ax)
                             plt.xticks(rotation=15)
                             p = p.capitalize()
                             #r = r.capitalize()
