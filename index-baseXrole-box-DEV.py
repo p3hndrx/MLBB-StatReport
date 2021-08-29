@@ -10,6 +10,7 @@ import matplotlib.pyplot as plt
 from matplotlib.offsetbox import TextArea, DrawingArea, OffsetImage, AnnotationBbox
 from matplotlib.cbook import get_sample_data
 from matplotlib import dates as mdates
+import numpy as np
 
 import logging
 import roles
@@ -246,7 +247,7 @@ for l in lang:
 
                         rslt = getattr(roles, p)
                         dfp = dfx[dfx['name'].isin(rslt)]
-                        print(f"{dfp}")
+                        #print(f"{dfp}")
 
                         #FILTER top 5:
                         latest = dfp['runtime'].iloc[-1]
@@ -271,12 +272,12 @@ for l in lang:
 
                             #print(f"{rslt_df}")
 
-
-
                             top = rslt_df['name'].tolist()
                             print(f"{top}")
                             dfc = dfp[dfp['name'].isin(top)]
-                            dfc = dfc.sort_values(by=[str(c)], ascending=1)
+                            dfc = dfc.sort_values(by=[str(c)], ascending=False)
+
+                            print(f"{dfc}")
                             #input("Press Enter to continue...")
 
 
@@ -284,7 +285,8 @@ for l in lang:
                             fig, ax = plt.subplots(facecolor='darkslategrey')
                             plt.style.use('dark_background')
 
-                            ax = dfc.boxplot(column=str(c), by=['name'],ax=ax,showmeans=True, fontsize=8,grid=False,positions=range(len(top)))
+                            ax = dfc.boxplot(column=str(c), by=['name'], ax=ax, showmeans=True, fontsize=8, grid=False,positions=range(len(top)))
+
                             ax.set(xlabel=None, title=None)
                             plt.xticks(rotation=15)
 
@@ -321,6 +323,27 @@ for l in lang:
                                 trans = ax.get_xaxis_transform()
                                 ab = AnnotationBbox(imagebox, xy, xybox=(0, -15), xycoords=trans,boxcoords="offset points", pad=0, frameon=False)
                                 ax.add_artist(ab)
+
+                            for i, (name, data) in enumerate(dfc.groupby('name')):
+
+
+                                df = rslt_df[rslt_df['name'] == name]
+                                y2 = df.iloc[0][str(c)]
+                                xy2 = (i, y2)
+                                xy = (i, y)
+                                ax.plot(xy2[0], xy2[1], "oy")
+                                offsetbox = TextArea(f"{y2}", textprops=dict(color="white",fontsize="small"))
+
+                                trans = ax.get_xaxis_transform()
+                                ab = AnnotationBbox(offsetbox, xy,
+                                                    xybox=(0, 10),
+                                                    xycoords=trans,
+                                                    boxcoords="offset points",
+                                                    pad=0, frameon=False)
+                                                    #arrowprops=dict(arrowstyle="->")
+                                ax.add_artist(ab)
+                                print(f"{name}:{xy}")
+                                #input("Press Enter to continue...")
 
                             # file output
                             #plt.show()

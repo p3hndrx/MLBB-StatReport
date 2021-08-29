@@ -310,6 +310,25 @@ for l in lang:
                                                 pad=0, frameon=False)
                             ax.add_artist(ab)
 
+                        for i, (name, data) in enumerate(dfc.groupby('name')):
+                            df = rslt_df[rslt_df['name'] == name]
+                            y2 = df.iloc[0][str(c)]
+                            xy2 = (i, y2)
+                            xy = (i, y)
+                            ax.plot(xy2[0], xy2[1], "oy")
+                            offsetbox = TextArea(f"{y2}", textprops=dict(color="white", fontsize="small"))
+
+                            trans = ax.get_xaxis_transform()
+                            ab = AnnotationBbox(offsetbox, xy,
+                                                xybox=(0, 10),
+                                                xycoords=trans,
+                                                boxcoords="offset points",
+                                                pad=0, frameon=False)
+                            # arrowprops=dict(arrowstyle="->")
+                            ax.add_artist(ab)
+                            print(f"{name}:{xy}")
+                            # input("Press Enter to continue...")
+
                         # file output
                         # plt.show()
                         op = f"{reportout}/{r}/{l}/{md}.{c}.png"
