@@ -289,7 +289,7 @@ for l in lang:
                                 fontsize=12,
                                 fontname='monospace')
                             plt.legend(loc=2)
-
+                            #ax.xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m'))
 
                             # LABEL
                             print("Generating Labels...")
