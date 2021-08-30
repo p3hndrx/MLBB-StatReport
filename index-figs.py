@@ -20,7 +20,7 @@ import heroicons
 # region ENVIRONMENT
 logging.basicConfig(filename="/tmp/sync-reportgen-type4.log", level=logging.DEBUG,
                     format="%(asctime)s:%(levelname)s:%(message)s")
-logging.info(f"********************** STARTING REPORT GEN - BASE X MODE-BOX")
+logging.info(f"********************** STARTING REPORT GEN - REGIONX")
 print("Starting Report Gen...")
 # endregion
 
@@ -41,7 +41,7 @@ yesterday = y.strftime("%Y%m%d")
 rawpath = "/Users/phunr/var/www/html/TierData/json"
 csvpath = "/Users/phunr/var/www/html/TierData/backfill"
 imgsrc = "/Users/phunr/PycharmProjects/MLBB-StatReport/heroes"
-reportout = "/Users/phunr/var/www/html/output/report/baseXmode-box"
+reportout = "/Users/phunr/var/www/html/output/report/regionX"
 
 
 # GENERATE FOLDER LISTS
@@ -146,15 +146,14 @@ i = 0
 t = 0
 
 for l in lang:
-    #dfx = pd.DataFrame(
-         #columns=['runtime', 'name', 'win', 'use', 'kda', 'region', 'period', 'elo', 'mode'])
+    dfx = pd.DataFrame(
+         columns=['runtime', 'name', 'win', 'use', 'kda', 'region', 'period', 'elo', 'mode'])
     for r in region:
+        #dfx = pd.DataFrame(columns=['runtime', 'name', 'win', 'use', 'kda', 'region', 'period', 'elo', 'mode'])
         for dt in dtrange:
-            dfx = pd.DataFrame(
-                columns=['runtime', 'name', 'win', 'use', 'kda', 'region', 'period', 'elo', 'mode'])
             for m in mode:
                 for lvl in level:
-                    for pt in runtimes[:90]:
+                    for pt in runtimes[:50]:
 
                         # constructbackfill
                         csvfile = f'{csvpath}/{pt}/en/{r}/{dt}.{lvl}.{m}.csv'
@@ -204,117 +203,126 @@ for l in lang:
                             #print(f"Bad Request: Missing: {jsonfile}")
                             logging.warning(f"Bad Request: Missing: {jsonfile}")
 
-                    #Remove Outliers
-                    print(f"Removing Outliers...")
-                    logging.info(f"Combined CSV: {reportout}/{r}.{m}.{lvl}.csv")
-                    dfx.drop(dfx[dfx['win'] == 100].index, inplace=True)
-                    dfx.drop(dfx[dfx['use'] <= .001].index, inplace=True)
-                    dfx.drop(dfx[dfx['kda'] >= 10].index, inplace=True)
+    #Remove Outliers
+    print(f"Removing Outliers...")
+    logging.info(f"Combined CSV: {reportout}/master.csv")
+    #dfx.drop(dfx[dfx['win'] == 100].index, inplace=True)
+    #dfx.drop(dfx[dfx['use'] <= .001].index, inplace=True)
+    #dfx.drop(dfx[dfx['kda'] >= 10].index, inplace=True)
+    dfx = dfx[dfx.use >= .001]
+    dfx = dfx[dfx.win != 100]
+    dfx = dfx[dfx.kda <= 20]
 
-            # TEST OUT TO CSV
-            print(f"Source Table... \n{dfx}")
-            dfx.to_csv(f"{reportout}/{r}.csv",index=False)
-            print(f"Combined CSV: {reportout}/{r}.csv")
-            logging.info(f"Combined CSV: {reportout}/{r}.csv")
+    # TEST OUT TO CSV
+    print(f"Source Table... \n{dfx}")
+    dfx.to_csv(f"{reportout}/master.csv",index=False)
+    print(f"Combined CSV: {reportout}/master.csv")
+    logging.info(f"Combined CSV: {reportout}/{r}.csv")
+    #input("Press Enter to continue...")
+
+
+    fig, ax = plt.subplots(facecolor='darkslategrey')
+    plt.style.use('dark_background')
+
+    for md in mode:
+        print(f"Cycling Modes...-{md}:")
+        logging.info(f"Cycling Modes...-{md}:")
+
+        dfm = dfx[dfx['mode']==md]
+        print(f"{dfm}")
+        #input("Press Enter to continue...")
+
+        for l in level:
+            print(f"Cycling Level...-{md}-{l}:")
+            logging.info(f"Cycling Modes...-{md}-{l}:")
+            dfl = dfm[dfm['elo'] == l]
+            print(f"{dfl}")
             #input("Press Enter to continue...")
 
+            for c in crit:
+                # FILTER top 5:
+                latest = dfm['runtime'].iloc[-1]
+                d = latest.strftime("%m/%d/%Y")
 
-            fig, ax = plt.subplots(facecolor='darkslategrey')
-            plt.style.use('dark_background')
+                #Get top heroes by each criteria
+                print(f"Last Date: {latest}; Top: {c}")
+                logging.info(f"Last Date: {latest}; Top: {c}")
+                rslt_df = dfl[dfl['runtime'] == latest]
+                rslt_df = rslt_df.sort_values(by=[str(c)],ascending=False).head(10)
+                rslt_df = rslt_df[['name','win','use','kda']]
 
-            for md in mode:
-                print(f"Cycling Modes...{r}-{md}:")
-                logging.info(f"Cycling Modes...{r}-{md}:")
+                if c == "win":
+                    clabel = "WinRate%"
+                elif c == "kda":
+                    clabel = "KDA"
+                elif c == "use":
+                    clabel = "Use%"
 
-                dfm = dfx[dfx['mode']==md]
-                print(f"{dfm}")
-                #input("Press Enter to continue...")
+                print(f"{rslt_df}")
 
-                for l in level:
-                    print(f"Cycling Level...{r}-{md}-{l}:")
-                    logging.info(f"Cycling Modes...{r}-{md}-{l}:")
-                    dfl = dfm[dfm['elo'] == l]
-                    print(f"{dfl}")
-                    #input("Press Enter to continue...")
+                top = rslt_df['name'].tolist()
+                #print(f"{top}")
 
-                    for c in crit:
-                        # FILTER top 5:
-                        latest = dfm['runtime'].iloc[-1]
-                        d = latest.strftime("%m/%d/%Y")
+                dfc = dfl[dfl['name'].isin(top)]
+                dfc = dfc.sort_values(by=[str(c)], ascending=False)
+                print(f"{dfc}")
+                input("Press Enter to continue...")
 
-                        #Get top heroes by each criteria
-                        print(f"Last Date: {latest}; Top: {c}")
-                        logging.info(f"Last Date: {latest}; Top: {c}")
-                        rslt_df = dfl[dfl['runtime'] == latest]
-                        rslt_df = rslt_df.sort_values(by=[str(c)],ascending=False).head(10)
-                        rslt_df = rslt_df[['name','win','use','kda']]
+                # BOX GRAPH PLOT
+                fig, ax = plt.subplots(facecolor='darkslategrey')
+                plt.style.use('dark_background')
 
-                        if c == "win":
-                            clabel = "WinRate%"
-                        elif c == "kda":
-                            clabel = "KDA"
-                        elif c == "use":
-                            clabel = "Use%"
+                #ax = dfc.boxplot(column=str(c), by=['name'], ax=ax, showmeans=True, fontsize=8, grid=False,positions=range(len(top)))
+                dfc.pivot(index='runtime', columns='name', values=c).plot(figsize=(10, 5), marker='o', linewidth=2,ax=ax)
 
-                        print(f"{rslt_df}")
+                ax.set(xlabel=None, title=None)
+                plt.xticks(rotation=15)
 
-                        top = rslt_df['name'].tolist()
-                        print(f"{top}")
-                        dfc = dfl[dfl['name'].isin(top)]
-                        dfc.sort_values(by=[str(c)], ascending=1)
+                md = md.capitalize()
+                plt.title(
+                    f'Top Heroes in {md} by {clabel} (As of {d})\Elo: {l}',
+                    fontsize=12,
+                    fontname='monospace')
+                plt.suptitle('')
 
-                        # BOX GRAPH PLOT
-                        fig, ax = plt.subplots(facecolor='darkslategrey')
-                        plt.style.use('dark_background')
+                '''
+                # LABEL
+                print("Generating Labels...")
+                logging.info(f"Generating Labels...")
 
-                        ax = dfc.boxplot(column=str(c), by=['name'], ax=ax, showmeans=True, fontsize=8, grid=False,
-                                         positions=range(len(top)))
-                        ax.set(xlabel=None, title=None)
-                        plt.xticks(rotation=15)
+                # move the xtick labels
+                ax.set_xticks(range(len(top)))
+                ax.tick_params(axis='x', which='major', pad=20)
 
-                        md = md.capitalize()
-                        r = r.capitalize()
-                        plt.title(
-                            f'Top Heroes in {md} by {clabel} (As of {d})\nRegion: {r}, Elo: {l}',
-                            fontsize=12,
-                            fontname='monospace')
-                        plt.suptitle('')
+                # use the ytick values to locate the image
 
-                        # LABEL
-                        print("Generating Labels...")
-                        logging.info(f"Generating Labels...")
+                y = ax.get_xticks()[0]
+                # print(f"{y}")
 
-                        # move the xtick labels
-                        ax.set_xticks(range(len(top)))
-                        ax.tick_params(axis='x', which='major', pad=20)
+                
+                for i, (name, data) in enumerate(dfc.groupby('name')):
+                    xy = (i, y)
 
-                        # use the ytick values to locate the image
+                    shero = name.replace("-", "").replace("'", "").replace(".", "").replace(" ", "").lower()
+                    fn = f"{imgsrc}/{shero}.png"  # path to file
+                    arr_img = plt.imread(fn, format='png')
+                    imagebox = OffsetImage(arr_img, zoom=0.125)
+                    imagebox.image.axes = ax
 
-                        y = ax.get_xticks()[0]
-                        # print(f"{y}")
+                    trans = ax.get_xaxis_transform()
+                    ab = AnnotationBbox(imagebox, xy, xybox=(0, -15), xycoords=trans, boxcoords="offset points",
+                                        pad=0, frameon=False)
+                    ax.add_artist(ab)
+                '''
 
-                        for i, (name, data) in enumerate(dfc.groupby('name')):
-                            xy = (i, y)
+                # file output
+                # plt.show()
+                op = f"{reportout}/{r}/{l}/{md}.{c}.png"
+                plt.savefig(op, transparent=False, bbox_inches="tight")
+                print(f"Combined Image: {op}")
+                logging.info(f"Combined Image: {op}")
 
-                            shero = name.replace("-", "").replace("'", "").replace(".", "").replace(" ", "").lower()
-                            fn = f"{imgsrc}/{shero}.png"  # path to file
-                            arr_img = plt.imread(fn, format='png')
-                            imagebox = OffsetImage(arr_img, zoom=0.125)
-                            imagebox.image.axes = ax
-
-                            trans = ax.get_xaxis_transform()
-                            ab = AnnotationBbox(imagebox, xy, xybox=(0, -15), xycoords=trans, boxcoords="offset points",
-                                                pad=0, frameon=False)
-                            ax.add_artist(ab)
-
-                        # file output
-                        # plt.show()
-                        op = f"{reportout}/{r}/{l}/{md}.{c}.png"
-                        plt.savefig(op, transparent=False, bbox_inches="tight")
-                        print(f"Combined Image: {op}")
-                        logging.info(f"Combined Image: {op}")
-
-                        plt.close('all')
+                plt.close('all')
 
 
 # endregion
