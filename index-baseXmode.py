@@ -36,6 +36,7 @@ rawpath = "/var/www/html/TierData/json"
 csvpath = "/var/www/html/TierData/backfill"
 imgsrc = "/root/MLBB-StatReport/heroes"
 reportout = "/var/www/html/reports/baseXmode"
+csvout = "/var/www/html/reports/csv/baseXmode"
 
 # DEVPATHS
 #rawpath = "/Users/phunr/var/www/html/TierData/json"
@@ -206,7 +207,7 @@ for l in lang:
 
                     #Remove Outliers
                     print(f"Removing Outliers...")
-                    logging.info(f"Combined CSV: {reportout}/{r}.{m}.{lvl}.csv")
+                    logging.info(f"Combined CSV: {csvout}/{r}.{m}.{lvl}.csv")
                     # dfx.drop(dfx[dfx['win'] == 100].index, inplace=True)
                     # dfx.drop(dfx[dfx['use'] <= .001].index, inplace=True)
                     # dfx.drop(dfx[dfx['kda'] >= 20].index, inplace=True)
@@ -216,9 +217,9 @@ for l in lang:
 
             # TEST OUT TO CSV
             print(f"Source Table... \n{dfx}")
-            dfx.to_csv(f"{reportout}/{r}.csv",index=False)
-            print(f"Combined CSV: {reportout}/{r}.csv")
-            logging.info(f"Combined CSV: {reportout}/{r}.csv")
+            dfx.to_csv(f"{csvout}/{r}.csv",index=False)
+            print(f"Combined CSV: {csvout}/{r}.csv")
+            logging.info(f"Combined CSV: {csvout}/{r}.csv")
             #input("Press Enter to continue...")
 
 
