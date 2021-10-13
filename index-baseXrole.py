@@ -222,7 +222,7 @@ for l in lang:
                     # dfx.drop(dfx[dfx['kda'] >= 20].index, inplace=True)
                     # dfx = dfx[dfx.use >= .001]
                     # dfx = dfx[dfx.win != 100]
-                    # dfx = dfx[dfx.kda <= 20]
+                    dfx = dfx[dfx.kda <= 20]
 
                     # TEST OUT TO CSV
                     print(f"Source Table... \n{dfx}")

@@ -222,8 +222,8 @@ for l in lang:
                     #dfx.drop(dfx[dfx['win'] == 100].index, inplace=True)
                     #dfx.drop(dfx[dfx['use'] <= .001].index, inplace=True)
                     #dfx.drop(dfx[dfx['kda'] >= 20].index, inplace=True)
-                    dfx = dfx[dfx.use >= .001]
-                    dfx = dfx[dfx.win != 100]
+                    #dfx = dfx[dfx.use >= .001]
+                    #dfx = dfx[dfx.win != 100]
                     dfx = dfx[dfx.kda <= 20]
 
                     # TEST OUT TO CSV
@@ -281,7 +281,8 @@ for l in lang:
                             #print(f"{top}")
                             dfc = dfp[dfp['name'].isin(top)]
                             dfc.sort_values(by=[str(c)], ascending=1)
-                            #input("Press Enter to continue...")
+                            print(f"{dfc}")
+                            input("Press Enter to continue...")
 
 
                             # HISTORICAL GRAPH PLOT
