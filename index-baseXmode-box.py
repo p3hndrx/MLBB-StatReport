@@ -211,7 +211,7 @@ for l in lang:
                     # dfx.drop(dfx[dfx['win'] == 100].index, inplace=True)
                     # dfx.drop(dfx[dfx['use'] <= .001].index, inplace=True)
                     # dfx.drop(dfx[dfx['kda'] >= 20].index, inplace=True)
-                    # dfx = dfx[dfx.use >= .001]
+                    dfx = dfx[dfx.use <= 10]
                     # dfx = dfx[dfx.win != 100]
                     dfx = dfx[dfx.kda <= 20]
 
