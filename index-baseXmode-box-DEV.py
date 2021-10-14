@@ -212,7 +212,11 @@ for l in lang:
                     # dfx.drop(dfx[dfx['kda'] >= 20].index, inplace=True)
                     #dfx = dfx[dfx.use >= .001]
                     #dfx = dfx[dfx.win != 100]
-                    dfx = dfx[dfx.kda <= 20]
+                    #dfx = dfx[dfx.kda <= 20]
+                    mediankda = dfx.loc[dfx['kda'] < 8, 'kda'].median()
+                    medianuse = dfx.loc[dfx['use'] < 10, 'use'].median()
+                    dfx['use'] = dfx['use'].mask(dfx['use'] > 10, medianuse)
+                    dfx['kda'] = dfx['kda'].mask(dfx['kda'] > 8, mediankda)
 
             # TEST OUT TO CSV
             print(f"Source Table... \n{dfx}")

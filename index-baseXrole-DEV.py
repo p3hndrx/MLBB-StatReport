@@ -222,9 +222,13 @@ for l in lang:
                     #dfx.drop(dfx[dfx['win'] == 100].index, inplace=True)
                     #dfx.drop(dfx[dfx['use'] <= .001].index, inplace=True)
                     #dfx.drop(dfx[dfx['kda'] >= 20].index, inplace=True)
-                    #dfx = dfx[dfx.use >= .001]
+                    #dfx = dfx[dfx.use <= 10]
                     #dfx = dfx[dfx.win != 100]
-                    dfx = dfx[dfx.kda <= 20]
+                    #dfx = dfx[dfx.kda <= 20]
+                    mediankda = dfx.loc[dfx['kda'] < 8, 'kda'].median()
+                    medianuse = dfx.loc[dfx['use'] < 10, 'use'].median()
+                    dfx['use'] = dfx['use'].mask(dfx['use'] > 10, medianuse)
+                    dfx['kda'] = dfx['kda'].mask(dfx['kda'] > 8, mediankda)
 
                     # TEST OUT TO CSV
                     print(f"Source Table... \n{dfx}")
@@ -281,8 +285,8 @@ for l in lang:
                             #print(f"{top}")
                             dfc = dfp[dfp['name'].isin(top)]
                             dfc.sort_values(by=[str(c)], ascending=1)
-                            print(f"{dfc}")
-                            input("Press Enter to continue...")
+                            #print(f"{dfc}")
+                            #input("Press Enter to continue...")
 
 
                             # HISTORICAL GRAPH PLOT
