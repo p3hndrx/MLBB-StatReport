@@ -1,5 +1,4 @@
-support = [
-'Angela',
+support = ['Angela',
 'Carmilla',
 'Diggie',
 'Estes',
@@ -7,10 +6,8 @@ support = [
 'Floryn',
 'Lolita',
 'Mathilda',
-'Rafaela'
-]
-tank=[
-'Akai',
+'Rafaela']
+tank=['Akai',
 'Atlas',
 'Barats',
 'Baxia',
@@ -23,11 +20,11 @@ tank=[
 'Johnson',
 'Khufra',
 'Minotaur',
+'Phylax',
 'Ruby',
 'Tigreal',
 'Uranus']
-mage=[
-'Alice',
+mage=['Alice',
 'Aurora',
 'Cecilion',
 'Chang-e',
@@ -46,13 +43,12 @@ mage=[
 'Odette',
 'Pharsa',
 'Vale',
+'Valentina',
 'Valir',
 'Vexana',
 'Yve',
-'Zhask'
-]
-marksman=[
-'Beatrix',
+'Zhask']
+marksman=['Beatrix',
 'Brody',
 'Bruno',
 'Claude',
@@ -69,10 +65,8 @@ marksman=[
 'Natan',
 'Popol and Kupa',
 'Wanwan',
-'Yi Sun-shin'
-]
-fighter=[
-'Aldous',
+'Yi Sun-shin']
+fighter=['Aldous',
 'Alpha',
 'Alucard',
 'Argus',
@@ -102,10 +96,8 @@ fighter=[
 'Thamuz',
 'X.Borg',
 'Yu Zhong',
-'Zilong'
-]
-assassin=[
-'Aamon',
+'Zilong']
+assassin=['Aamon',
 'Benedetta',
 'Fanny',
 'Gusion',
@@ -117,5 +109,5 @@ assassin=[
 'Ling',
 'Natalia',
 'Saber',
-'Selena'
-]
+'Selena']
+#null

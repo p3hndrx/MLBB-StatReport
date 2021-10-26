@@ -1,5 +1,4 @@
-portrait = {
-'aamon':'https://static.wikia.nocookie.net/mobile-legends/images/3/3b/Aamon.png',
+portrait = {'aamon':'https://static.wikia.nocookie.net/mobile-legends/images/3/3b/Aamon.png',
 'akai':'https://akmwebstatic.yuanzhanapp.com/web/madmin/image_5f694a5e98b116d1cbb143c8e766019b.png',
 'aldous':'https://akmwebstatic.yuanzhanapp.com/web/madmin/image_433f9653743e72e1e152428d26838f9e.png',
 'alice':'https://akmwebstatic.yuanzhanapp.com/web/madmin/image_7f0da9c3ddefff4530e8dbe17054c45e.png',
@@ -88,6 +87,7 @@ portrait = {
 'paquito':'https://static.wikia.nocookie.net/mobile-legends/images/5/57/Paquito.png',
 'pharsa':'https://akmwebstatic.yuanzhanapp.com/web/madmin/image_212e59ee7c8490397278ba68c8063a19.png',
 'phoveus':'https://static.wikia.nocookie.net/mobile-legends/images/e/ea/Phoveus.png',
+'phylax':'https://static.wikia.nocookie.net/mobile-legends/images/3/3a/Phylax.png',
 'popolandkupa':'https://akmwebstatic.yuanzhanapp.com/web/madmin/image_ca29a7735b2c9ae8cd38d745d4d18bcd.jpg',
 'rafaela':'https://akmwebstatic.yuanzhanapp.com/web/madmin/image_549ab8159821398b48e7e79ceb298396.png',
 'roger':'https://akmwebstatic.yuanzhanapp.com/web/madmin/image_d2f1ce4289d7399177b7f8a25bdf593d.png',
@@ -101,6 +101,7 @@ portrait = {
 'tigreal':'https://akmwebstatic.yuanzhanapp.com/web/madmin/image_23a7a603ff9d20074777d52e2eb202f3.jpg',
 'uranus':'https://akmwebstatic.yuanzhanapp.com/web/madmin/image_03f3e7982542f805a4ec9e5659ed217e.png',
 'vale':'https://akmwebstatic.yuanzhanapp.com/web/madmin/image_de9363822c6d50d5dde8500a05b9657b.png',
+'valentina':'https://static.wikia.nocookie.net/mobile-legends/images/9/90/Valentina.png',
 'valir':'https://akmwebstatic.yuanzhanapp.com/web/madmin/image_11c3284b5ea83dfd377f4d1b9724c960.jpg',
 'vexana':'https://akmwebstatic.yuanzhanapp.com/web/madmin/image_b77a4d3d94ddbc2302603ba74e95a326.png',
 'wanwan':'https://akmwebstatic.yuanzhanapp.com/web/madmin/image_d744e6f02ba1d9b5f246a5532cc2b201.png',
@@ -109,5 +110,4 @@ portrait = {
 'yuzhong':'https://akmwebstatic.yuanzhanapp.com/web/madmin/image_ce46392c8bb8714320dc51ee6c0b3e84.jpg',
 'yve':'https://static.wikia.nocookie.net/mobile-legends/images/3/3d/Yve.png',
 'zhask':'https://akmwebstatic.yuanzhanapp.com/web/madmin/image_ca13970038ce4d7590d2f271b6c6f7f5.png',
-'zilong':'https://akmwebstatic.yuanzhanapp.com/web/madmin/image_3bbb2c2b8a78d0d63ecd62d74048fcf4.jpg'
-}
+'zilong':'https://akmwebstatic.yuanzhanapp.com/web/madmin/image_3bbb2c2b8a78d0d63ecd62d74048fcf4.jpg'}
