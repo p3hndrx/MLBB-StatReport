@@ -19,9 +19,9 @@ import heroicons
 # endregion
 
 # region ENVIRONMENT
-logging.basicConfig(filename="/tmp/sync-recent-summary.log", level=logging.DEBUG,
+logging.basicConfig(filename="/tmp/sync-reportgen-type4.log", level=logging.DEBUG,
                     format="%(asctime)s:%(levelname)s:%(message)s")
-logging.info(f"********************** STARTING REPORT GEN - RECENT SUMMARY")
+logging.info(f"********************** STARTING REPORT GEN - REGIONX")
 print("Starting Report Gen...")
 # endregion
 
@@ -33,16 +33,16 @@ logging.info(f"Runtime: {today}")
 yesterday = y.strftime("%Y%m%d")
 
 # PATHS
-rawpath = "/var/www/html/TierData/json"
-csvpath = "/var/www/html/TierData/backfill"
+#rawpath = "/var/www/html/TierData/json"
+#csvpath = "/var/www/html/TierData/backfill"
 #imgsrc = "/root/MLBB-StatReport/heroes"
-reportout = "/var/www/html/reports/"
+#reportout = "/var/www/html/reports/baseXrole"
 
 # DEVPATHS
-#rawpath = "/Users/phunr/var/www/html/TierData/json"
-#csvpath = "/Users/phunr/var/www/html/TierData/backfill"
-#imgsrc = "/Users/phunr/PycharmProjects/MLBB-StatReport/heroes"
-#reportout = "/Users/phunr/var/www/html/output/report/master"
+rawpath = "/Users/phunr/var/www/html/TierData/json"
+csvpath = "/Users/phunr/var/www/html/TierData/backfill"
+imgsrc = "/Users/phunr/PycharmProjects/MLBB-StatReport/heroes"
+reportout = "/Users/phunr/var/www/html/output/report/master"
 
 
 # GENERATE FOLDER LISTS
