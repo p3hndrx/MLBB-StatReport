@@ -36,7 +36,7 @@ yesterday = y.strftime("%Y%m%d")
 rawpath = "/var/www/html/TierData/json"
 csvpath = "/var/www/html/TierData/backfill"
 #imgsrc = "/root/MLBB-StatReport/heroes"
-reportout = "/var/www/html/reports/"
+reportout = "/var/www/html/reports"
 
 # DEVPATHS
 #rawpath = "/Users/phunr/var/www/html/TierData/json"
@@ -214,7 +214,7 @@ for l in lang:
     dfx.to_csv(f"{reportout}/master.csv",index=False)
     print(f"Combined CSV: {reportout}/master.csv")
     logging.info(f"Combined CSV: {reportout}/{r}.csv")
-    input("Press Enter to continue...")
+    #input("Press Enter to continue...")
 
 
 
