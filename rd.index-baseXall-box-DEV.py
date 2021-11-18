@@ -33,7 +33,7 @@ logging.info(f"Runtime: {today}")
 yesterday = y.strftime("%Y%m%d")
 
 # PATHS
-rawpath = "/var/www/html/RankData"
+rawpath = "/tmp/RankData.fake"
 #imgsrc = "/root/MLBB-StatReport/heroes"
 imgsrc = "/Users/phunr/PycharmProjects/MLBB-StatReport/heroes"
 reportout = "/tmp/baseXall-box.rd"
