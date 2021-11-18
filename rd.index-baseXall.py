@@ -102,7 +102,7 @@ t = 0
 
 for lvl in level:
     dfx = pd.DataFrame(columns=['runtime','name', 'win', 'use', 'ban', 'wrank', 'urank', 'banrank', 'elo'])
-    for pt in runtimes[:90]:
+    for pt in runtimes[:30]:
 
         #constructoutput
         jsonfile = f'{rawpath}/{pt}/{lvl}.json'
