@@ -50,6 +50,7 @@ logging.info(f"Crawl Runtimes: {runtimes}")
 # DATASETS
 crit = ['win','use','ban']
 #lang = ["en"]
+
 #dtrange = ["Week"]
 #mode = ["All-Modes", "Classic", "Rank", "Brawl"]
 level = ["All", "Legend", "Mythic"]
@@ -102,7 +103,7 @@ print("Compiling Lookup...")
 logging.info("Compiling Lookup")
 
 # Create master table
-runtimes = sorted(runtimes, reverse=False)
+runtimes = sorted(runtimes, reverse=True)
 
 # START THE CRAWLER
 i = 0
@@ -110,7 +111,7 @@ t = 0
 
 for lvl in level:
     dfx = pd.DataFrame(columns=['runtime','name', 'win', 'use', 'ban', 'wrank', 'urank', 'banrank', 'elo'])
-    for pt in runtimes[:90]:
+    for pt in runtimes[:30]:
 
         #constructoutput
         jsonfile = f'{rawpath}/{pt}/{lvl}.json'
