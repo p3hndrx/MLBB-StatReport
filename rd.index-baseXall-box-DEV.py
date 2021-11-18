@@ -36,7 +36,7 @@ yesterday = y.strftime("%Y%m%d")
 rawpath = "/var/www/html/RankData"
 #imgsrc = "/root/MLBB-StatReport/heroes"
 imgsrc = "/Users/phunr/PycharmProjects/MLBB-StatReport/heroes"
-reportout = "/var/www/html/reports/baseXall-box.rd"
+reportout = "/tmp/baseXall-box.rd"
 
 
 # GENERATE FOLDER LISTS
