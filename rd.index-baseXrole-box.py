@@ -14,7 +14,7 @@ from matplotlib import dates as mdates
 
 import logging
 import roles
-import heroicons
+
 
 # endregion
 

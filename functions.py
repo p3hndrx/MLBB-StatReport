@@ -12,7 +12,7 @@ from matplotlib.ticker import FormatStrFormatter
 
 import logging
 import roles
-import heroicons
+
 
 # endregion
 

@@ -14,7 +14,7 @@ import numpy as np
 
 import logging
 import roles
-import heroicons
+
 
 # endregion
 
