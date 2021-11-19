@@ -6,9 +6,13 @@ from os.path import exists
 
 import json
 import pandas as pd
-from pandas import json_normalize
+import matplotlib.pyplot as plt
+
 import matplotlib.pyplot as plt
 from matplotlib.ticker import FormatStrFormatter
+from matplotlib.offsetbox import TextArea, DrawingArea, OffsetImage, AnnotationBbox
+from matplotlib.cbook import get_sample_data
+from matplotlib import dates as mdates
 
 import logging
 # endregion
@@ -28,6 +32,7 @@ yesterday = y.strftime("%Y%m%d")
 rawpath = "/tmp/RankData.fake"
 outpath = "/tmp/summary.rd"
 avgoutpath = "/tmp/averages.rd"
+imgsrc = "/Users/phunr/PycharmProjects/MLBB-StatReport/heroes"
 
 runtimes = os.listdir(rawpath)
 runtimes = sorted(runtimes, reverse=True)
@@ -132,6 +137,20 @@ for lvl in level:
         #df2.plot(x='runtime',xlabel="Date", kind='line', marker='o',linewidth=2,alpha=.7,subplots=True,color=['khaki', 'lightcyan','thistle'])
         plt.suptitle(f'Historical Data for {hero}\nElo: {lvl}', fontsize=12,fontname = 'monospace')
 
+        shero = hero.replace("-", "").replace("'", "").replace(".", "").replace(" ", "").lower()
+        print(f"Searching {shero} from {hero}")
+        logging.debug(f"Searching {shero} from {hero}")
+
+        # Generate Coordinates
+        # search
+        xy = (0, 0)
+
+        fn = get_sample_data(f"{imgsrc}/{shero}.png", asfileobj=False)
+        arr_img = plt.imread(fn, format='png')
+
+        imgax = fig.add_axes([0.05, 0.9, 0.1, 0.1], zorder=1)
+        imgax.imshow(arr_img)
+        imgax.axis('off')
 
         #if outlier >= 1:
         #    print(f"We have an outlier.")
@@ -161,6 +180,24 @@ for lvl in level:
         df2.boxplot('ban',ax=ax3,showmeans=True, fontsize=10, grid=False)
         plt.style.use('dark_background')
         plt.suptitle(f'Summary Data for {hero}\nElo: {lvl}', fontsize=12,fontname = 'monospace')
+
+
+        shero = hero.replace("-", "").replace("'", "").replace(".", "").replace(" ", "").lower()
+        print(f"Searching {shero} from {hero}")
+        logging.debug(f"Searching {shero} from {hero}")
+
+        # Generate Coordinates
+        # search
+        xy = (0, 0)
+
+        fn = get_sample_data(f"{imgsrc}/{shero}.png", asfileobj=False)
+        arr_img = plt.imread(fn, format='png')
+
+        imgax = fig.add_axes([0.05, 0.9, 0.1, 0.1], zorder=1)
+        imgax.imshow(arr_img)
+        imgax.axis('off')
+
+
         #for axis in ax:
         #    print(type(axis))
         plt.tight_layout()
