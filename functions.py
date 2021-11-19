@@ -11,7 +11,8 @@ import matplotlib.pyplot as plt
 from matplotlib.ticker import FormatStrFormatter
 
 import logging
-
+import roles
+import heroicons
 
 # endregion
 
@@ -22,6 +23,7 @@ def statstable(d, rawpath):
     logging.info(f"Crawl Runtimes: {runtimes}")
 
     level = ["All", "Legend", "Mythic"]
+    prof = ["assassin", "marksman", "mage", "tank", "support", "fighter"]
 
     # START THE CRAWLER
     dfx = pd.DataFrame(columns=['runtime', 'name', 'win', 'use', 'ban', 'wrank', 'urank', 'banrank', 'elo'])
@@ -68,6 +70,12 @@ def statstable(d, rawpath):
                 logging.warning(f"Bad Request: Missing: {jsonfile}")
 
         # TEST OUT TO CSV
+    for p in prof:
+        print(f"Matching {p}:")
+        rslt = getattr(roles, p)
+
+        dfx.loc[dfx.name.isin(rslt), 'role'] = p
+    dfx = dfx.round(2)
 
     print(f"Combined:{lvl}-\n{dfx}")
     return dfx
