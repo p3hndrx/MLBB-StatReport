@@ -133,7 +133,7 @@ for lvl in level:
         top = rslt_df['name'].tolist()
         # print(f"{top}")
         dfc = dfx[dfx['name'].isin(top)]
-        dfc.sort_values(by=[str(c)], ascending=1)
+        dfc.sort_values(by=[str(c)], ascending=False)
         print(f"{dfc}")
         # input("Press Enter to continue...")
 

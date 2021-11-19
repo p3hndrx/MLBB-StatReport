@@ -153,15 +153,21 @@ for lvl in level:
             dfc = dfp[dfp['name'].isin(top)]
             dfc = dfc.sort_values(by=[str(c)], ascending=False)
 
-            print(f"{dfc}")
-            #input("Press Enter to continue...")
+            print(f"BEFORE: \n{dfc}")
+           # input("Press Enter to continue...")
 
 
             # BOX GRAPH PLOT
             fig, ax = plt.subplots(facecolor='darkslategrey')
             plt.style.use('dark_background')
 
-            ax = dfc.boxplot(column=str(c), by=['name'], ax=ax, showmeans=True, fontsize=8, grid=False,positions=range(len(top)))
+
+            dfc.reset_index(inplace=True)
+            df2 = pd.DataFrame({col: vals[str(c)] for col, vals in dfc.groupby(['name'])})
+            meds = df2.median().sort_values()
+            print(meds)
+            ax = df2[meds.index].boxplot(ax=ax, return_type="axes", showmeans=True, fontsize=8, grid=False,positions=range(len(top)))
+            #ax = dfc.boxplot(column=str(c), by=['name'], ax=ax, showmeans=True, fontsize=8, grid=False,positions=range(len(top)))
 
             ax.set(xlabel=None, title=None)
             plt.xticks(rotation=15)
@@ -186,10 +192,10 @@ for lvl in level:
 
             y = ax.get_xticks()[0]
             #print(f"{y}")
-
-            for i, (name, data) in enumerate(dfc.groupby('name')):
+            i=0
+            #for i, (name, data) in enumerate(dfc.groupby('name')):
+            for (name, data) in meds.iteritems():
                 xy = (i, y)
-
                 shero = name.replace("-", "").replace("'", "").replace(".", "").replace(" ", "").lower()
                 fn = f"{imgsrc}/{shero}.png"  # path to file
                 arr_img = plt.imread(fn, format='png')
@@ -199,9 +205,11 @@ for lvl in level:
                 trans = ax.get_xaxis_transform()
                 ab = AnnotationBbox(imagebox, xy, xybox=(0, -15), xycoords=trans,boxcoords="offset points", pad=0, frameon=False)
                 ax.add_artist(ab)
+                i+=1
 
-            for i, (name, data) in enumerate(dfc.groupby('name')):
-
+            i=0
+            #for i, (name, data) in enumerate(dfc.groupby('name')):
+            for (name, data) in meds.iteritems():
 
                 df = rslt_df[rslt_df['name'] == name]
                 df = df.round(2)
@@ -221,7 +229,7 @@ for lvl in level:
                 ax.add_artist(ab)
                 print(f"{name}:{xy}")
                 #input("Press Enter to continue...")
-
+                i+=1
             # file output
             #plt.show()
             op = f"{reportout}/{lvl}/{p}.{c}.png"
