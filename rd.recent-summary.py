@@ -74,21 +74,21 @@ runtimes = sorted(runtimes, reverse=True)
 for tp in period:
     if tp == "day1":
         d = 1
-        title = "Day"
+        dt = "Day"
     elif tp == "day7":
         d = 7
-        title = "Week"
+        dt = "Week"
     elif tp == "day30":
         d = 30
-        title = "Month"
+        dt = "Month"
     elif tp == "day90":
         d = 90
-        title = "Season"
+        dt = "Season"
     elif tp == "day365":
         d = 365
-        title = "Year"
+        dt = "Year"
 
-    print(f"RUnning: {title}:{tp}")
+    print(f"RUnning: {dt}:{tp}")
     from functions import statstable
     dfx = statstable(d, rawpath)
 
@@ -96,8 +96,8 @@ for tp in period:
 
     # TEST OUT TO CSV
     print(f"Source Table... \n{dfx}")
-    dfx.to_csv(f"{reportout}/rd.{title}.master.csv",index=False)
-    print(f"Combined CSV: {reportout}/rd.{title}.master.csv")
+    dfx.to_csv(f"{reportout}/rd.{dt}.master.csv",index=False)
+    print(f"Combined CSV: {reportout}/rd.{dt}.master.csv")
     #input("Press Enter to continue...")
 
 # endregion
