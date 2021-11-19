@@ -35,7 +35,6 @@ yesterday = y.strftime("%Y%m%d")
 # PATHS
 rawpath = "/var/www/html/RankData"
 imgsrc = "/root/MLBB-StatReport/heroes"
-#imgsrc = "/Users/phunr/PycharmProjects/MLBB-StatReport/heroes"
 reportout = "/var/www/html/reports/baseXrole.rd"
 
 
@@ -49,10 +48,7 @@ logging.info(f"Crawl Runtimes: {runtimes}")
 
 # DATASETS
 crit = ['win','use','ban']
-#lang = ["en"]
-
 #dtrange = ["Week"]
-#mode = ["All-Modes", "Classic", "Rank", "Brawl"]
 level = ["All", "Legend", "Mythic"]
 prof = ["assassin","marksman","mage","tank","support","fighter"]
 
@@ -110,59 +106,10 @@ i = 0
 t = 0
 
 for lvl in level:
-    dfx = pd.DataFrame(columns=['runtime','name', 'win', 'use', 'ban', 'wrank', 'urank', 'banrank', 'elo'])
-    for pt in runtimes[:30]:
+    from functions import statstable
+    dfx = statstable(50, rawpath)
 
-        #constructoutput
-        jsonfile = f'{rawpath}/{pt}/{lvl}.json'
-        if os.path.exists(jsonfile):
-            print("Requesting: " + jsonfile)
-            logging.info("Requesting: " + jsonfile)
-
-            ##### BUILD TABLES ####
-            with open(jsonfile) as j:
-                data = json.load(j)
-
-                df = json_normalize(data, ['data', 'data'])
-
-                # convert from strings:
-                df['win'] = list(map(lambda x: x[:-1], df['win'].values))
-                df['use'] = list(map(lambda x: x[:-1], df['use'].values))
-                df['ban'] = list(map(lambda x: x[:-1], df['ban'].values))
-
-                df['win'] = [float(x) for x in df['win'].values]
-                df['use'] = [float(x) for x in df['use'].values]
-                df['ban'] = [float(x) for x in df['ban'].values]
-
-                # add ranking column
-                df = df.sort_values(by=['use'], ascending=False)
-                df['urank'] = range(1, len(df) + 1)
-                df = df.sort_values(by=['win'], ascending=False)
-                df['wrank'] = range(1, len(df) + 1)
-                df = df.sort_values(by=['ban'], ascending=False)
-                df['banrank'] = range(1, len(df) + 1)
-
-                df['runtime'] = f"{pt}"
-                df['runtime'] = df['runtime'].astype('datetime64[ns]')
-                df['elo'] = f"{lvl}"
-
-                dfx = pd.concat([dfx, df], axis=0)
-        else:
-            print(f"Bad Request: Missing: {jsonfile}")
-            logging.warning(f"Bad Request: Missing: {jsonfile}")
-
-    #TEST OUT TO CSV
-    #dfx.to_csv(f"{outpath}/{r}/{m}/{lvl}.csv",index=False)
-    print(f"Combined:{lvl}-\n{dfx}")
-    #logging.info(f"Combined:{lvl}-{m}-{r}\n{dfx}")
-
-
-    #TEST MAIN OUT
-    #print(f"{dfx}")
-    #dfx.to_csv(f"{reportout}/master.csv", index=False)
-    #print(f"Combined CSV: {reportout}/master.csv")
-    #logging.info(f"Combined CSV: {reportout}/master.csv")
-    #input("Press Enter to continue...")
+    dfx = dfx[dfx['elo'].str.contains(lvl)]
 
     fig, ax = plt.subplots(facecolor='darkslategrey')
     plt.style.use('dark_background')
@@ -177,7 +124,6 @@ for lvl in level:
 
         #FILTER top 5:
         latest = dfp['runtime'].iloc[-1]
-
 
         print(latest)
 
@@ -225,7 +171,10 @@ for lvl in level:
                 fontsize=12,
                 fontname='monospace')
             plt.legend(loc=2)
-            #ax.xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m'))
+            ax.xaxis.set_minor_locator(mdates.DayLocator(interval=1))
+            ax.xaxis.set_minor_formatter(mdates.DateFormatter(''))
+            ax.xaxis.set_major_locator(mdates.DayLocator(interval=5))
+            ax.xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m-%d'))
 
             # LABEL
             print("Generating Labels...")
