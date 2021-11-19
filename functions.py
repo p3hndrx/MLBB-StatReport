@@ -51,6 +51,10 @@ def statstable(d, rawpath):
                     df['use'] = [float(x) for x in df['use'].values]
                     df['ban'] = [float(x) for x in df['ban'].values]
 
+                    df['win'] = df['win'].round(2)
+                    df['use'] = df['use'].round(2)
+                    df['ban'] = df['ban'].round(2)
+
                     # add ranking column
                     df = df.sort_values(by=['use'], ascending=False)
                     df['urank'] = range(1, len(df) + 1)
@@ -75,7 +79,7 @@ def statstable(d, rawpath):
         rslt = getattr(roles, p)
 
         dfx.loc[dfx.name.isin(rslt), 'role'] = p
-    dfx = dfx.round(2)
+
 
     print(f"Combined:{lvl}-\n{dfx}")
     return dfx

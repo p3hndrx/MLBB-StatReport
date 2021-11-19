@@ -47,7 +47,7 @@ logging.info(f"Crawl Runtimes: {runtimes}")
 
 # DATASETS
 crit = ['win','use','ban']
-#dtrange = ["Week"]
+period = ["day1","day7","day30","day90","day365"]
 level = ["All", "Legend", "Mythic"]
 prof = ["assassin","marksman","mage","tank","support","fighter"]
 
@@ -63,34 +63,42 @@ if not os.path.exists(reportout):
 # endregion
 
 # region TABLE GEN
-print("Compiling Lookup...")
-logging.info("Compiling Lookup")
+print("Compiling Lookups...")
+logging.info("Compiling Lookups")
 
 # Create master table
 runtimes = sorted(runtimes, reverse=True)
 
 # START THE CRAWLER
-from functions import statstable
-dfx = statstable(7, rawpath)
 
-print(dfx)
+for tp in period:
+    if tp == "day1":
+        d = 1
+        title = "Day"
+    elif tp == "day7":
+        d = 7
+        title = "Week"
+    elif tp == "day30":
+        d = 30
+        title = "Month"
+    elif tp == "day90":
+        d = 90
+        title = "Season"
+    elif tp == "day365":
+        d = 365
+        title = "Year"
 
-#Find Professions
-print(f"Checking Professions:")
-dfx['role'] = '-'
+    print(f"RUnning: {title}:{tp}")
+    from functions import statstable
+    dfx = statstable(d, rawpath)
 
-for p in prof:
-    print(f"Matching {p}:")
-    rslt = getattr(roles, p)
+    print(dfx)
 
-    dfx.loc[dfx.name.isin(rslt), 'role'] = p
-dfx = dfx.round(2)
-
-# TEST OUT TO CSV
-print(f"Source Table... \n{dfx}")
-dfx.to_csv(f"{reportout}/rd.master.csv",index=False)
-print(f"Combined CSV: {reportout}/master.csv")
-#input("Press Enter to continue...")
+    # TEST OUT TO CSV
+    print(f"Source Table... \n{dfx}")
+    dfx.to_csv(f"{reportout}/rd.{title}.master.csv",index=False)
+    print(f"Combined CSV: {reportout}/rd.{title}.master.csv")
+    #input("Press Enter to continue...")
 
 # endregion
 
