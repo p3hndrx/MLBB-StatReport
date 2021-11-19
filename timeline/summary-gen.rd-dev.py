@@ -93,8 +93,8 @@ for lvl in level:
         logging.info(f"Exists: {avgoutputcheck}")
 # endregion
 
-for lvl in level:
 # region GEN FUNCTION
+for lvl in level:
     from functions import mastertable
     dfx = mastertable(10,rawpath)
 
