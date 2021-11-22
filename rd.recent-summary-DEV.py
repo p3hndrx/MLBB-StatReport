@@ -33,7 +33,7 @@ logging.info(f"Runtime: {today}")
 yesterday = y.strftime("%Y%m%d")
 
 # PATHS
-rawpath = "/tmp/RankData.fake"
+rawpath = "/var/www/html/RankData"
 reportout = "/tmp/report"
 
 
@@ -96,7 +96,7 @@ for tp in period:
 
     # TEST OUT TO CSV
     print(f"Source Table... \n{dfx}")
-    dfx.to_csv(f"{reportout}/rd.{dt}.master.csv",index=False)
+    dfx.to_csv(f"{reportout}/csv/rd.{dt}.master.csv",index=False)
     print(f"Combined CSV: {reportout}/rd.{dt}.master.csv")
     #input("Press Enter to continue...")
 
