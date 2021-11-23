@@ -75,13 +75,13 @@ def statstable(d, rawpath):
 
         # TEST OUT TO CSV
     for p in prof:
-        print(f"Matching {p}:")
+        #print(f"Matching {p}:")
         rslt = getattr(roles, p)
 
         dfx.loc[dfx.name.isin(rslt), 'role'] = p
 
 
-    print(f"Combined:{lvl}-\n{dfx}")
+    #print(f"Combined:{lvl}-\n{dfx}")
     return dfx
 
 
