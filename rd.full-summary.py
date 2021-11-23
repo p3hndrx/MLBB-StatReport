@@ -111,45 +111,45 @@ for tp in period:
         dfs['elo'] = dfx['elo'].values
         print(dfs)
     elif tp == "day30":
-        dfm = dfx.groupby(['name', 'elo'], as_index=True).apply(lambda gdf: gdf.assign(win_m=lambda gdf: gdf['win'].mean()))
-        dfm = dfm.groupby(['name', 'elo'], as_index=True).apply(lambda gdf: gdf.assign(use_m=lambda gdf: gdf['use'].mean()))
-        dfm = dfm.groupby(['name', 'elo'], as_index=True).apply(lambda gdf: gdf.assign(ban_m=lambda gdf: gdf['ban'].mean()))
+        dfm = dfx.groupby(['name', 'elo'], as_index=False).apply(lambda gdf: gdf.assign(win_m=lambda gdf: gdf['win'].mean()))
+        dfm = dfm.groupby(['name', 'elo'], as_index=False).apply(lambda gdf: gdf.assign(use_m=lambda gdf: gdf['use'].mean()))
+        dfm = dfm.groupby(['name', 'elo'], as_index=False).apply(lambda gdf: gdf.assign(ban_m=lambda gdf: gdf['ban'].mean()))
         dfm = dfm[dfm['runtime'] == runtime]
         dfm = dfm[['name', 'win_m', 'use_m', 'ban_m', 'elo']]
         print(dfm)
         dfs = pd.merge(dfs, dfm, how='inner', on=['name', 'elo'])
         print(dfs)
     elif tp == "day60":
-        dfb = dfx.groupby(['name', 'elo'], as_index=True).apply(lambda gdf: gdf.assign(win_b=lambda gdf: gdf['win'].mean()))
-        dfb = dfb.groupby(['name', 'elo'], as_index=True).apply(lambda gdf: gdf.assign(use_b=lambda gdf: gdf['use'].mean()))
-        dfb = dfb.groupby(['name', 'elo'], as_index=True).apply(lambda gdf: gdf.assign(ban_b=lambda gdf: gdf['ban'].mean()))
+        dfb = dfx.groupby(['name', 'elo'], as_index=False).apply(lambda gdf: gdf.assign(win_b=lambda gdf: gdf['win'].mean()))
+        dfb = dfb.groupby(['name', 'elo'], as_index=False).apply(lambda gdf: gdf.assign(use_b=lambda gdf: gdf['use'].mean()))
+        dfb = dfb.groupby(['name', 'elo'], as_index=False).apply(lambda gdf: gdf.assign(ban_b=lambda gdf: gdf['ban'].mean()))
         dfb = dfb[dfb['runtime'] == runtime]
         dfb = dfb[['name', 'win_b', 'use_b', 'ban_b', 'elo']]
         print(dfb)
         dfs = pd.merge(dfs, dfb, how='inner', on=['name', 'elo'])
         print(dfs)
     elif tp == "day90":
-        df3 = dfx.groupby(['name', 'elo'], as_index=True).apply(lambda gdf: gdf.assign(win_s=lambda gdf: gdf['win'].mean()))
-        df3 = df3.groupby(['name', 'elo'], as_index=True).apply(lambda gdf: gdf.assign(use_s=lambda gdf: gdf['use'].mean()))
-        df3 = df3.groupby(['name', 'elo'], as_index=True).apply(lambda gdf: gdf.assign(ban_s=lambda gdf: gdf['ban'].mean()))
+        df3 = dfx.groupby(['name', 'elo'], as_index=False).apply(lambda gdf: gdf.assign(win_s=lambda gdf: gdf['win'].mean()))
+        df3 = df3.groupby(['name', 'elo'], as_index=False).apply(lambda gdf: gdf.assign(use_s=lambda gdf: gdf['use'].mean()))
+        df3 = df3.groupby(['name', 'elo'], as_index=False).apply(lambda gdf: gdf.assign(ban_s=lambda gdf: gdf['ban'].mean()))
         df3 = df3[df3['runtime'] == runtime]
         df3 = df3[['name', 'win_s', 'use_s', 'ban_s', 'elo']]
         print(df3)
         dfs = pd.merge(dfs, df3, how='inner', on=['name', 'elo'])
         print(dfs)
     elif tp == "day180":
-        dfa = dfx.groupby(['name', 'elo'], as_index=True).apply(lambda gdf: gdf.assign(win_a=lambda gdf: gdf['win'].mean()))
-        dfa = dfa.groupby(['name', 'elo'], as_index=True).apply(lambda gdf: gdf.assign(use_a=lambda gdf: gdf['use'].mean()))
-        dfa = dfa.groupby(['name', 'elo'], as_index=True).apply(lambda gdf: gdf.assign(ban_a=lambda gdf: gdf['ban'].mean()))
+        dfa = dfx.groupby(['name', 'elo'], as_index=False).apply(lambda gdf: gdf.assign(win_a=lambda gdf: gdf['win'].mean()))
+        dfa = dfa.groupby(['name', 'elo'], as_index=False).apply(lambda gdf: gdf.assign(use_a=lambda gdf: gdf['use'].mean()))
+        dfa = dfa.groupby(['name', 'elo'], as_index=False).apply(lambda gdf: gdf.assign(ban_a=lambda gdf: gdf['ban'].mean()))
         dfa = dfa[dfa['runtime'] == runtime]
         dfa = dfa[['name', 'win_a', 'use_a', 'ban_a', 'elo']]
         print(dfa)
         dfs = pd.merge(dfs, dfa, how='inner', on=['name', 'elo'])
         print(dfs)
     elif tp == "day365":
-        dfy = dfx.groupby(['name', 'elo'], as_index=True).apply(lambda gdf: gdf.assign(win_y=lambda gdf: gdf['win'].mean()))
-        dfy = dfy.groupby(['name', 'elo'], as_index=True).apply(lambda gdf: gdf.assign(use_y=lambda gdf: gdf['use'].mean()))
-        dfy = dfy.groupby(['name', 'elo'], as_index=True).apply(lambda gdf: gdf.assign(ban_y=lambda gdf: gdf['ban'].mean()))
+        dfy = dfx.groupby(['name', 'elo'], as_index=False).apply(lambda gdf: gdf.assign(win_y=lambda gdf: gdf['win'].mean()))
+        dfy = dfy.groupby(['name', 'elo'], as_index=False).apply(lambda gdf: gdf.assign(use_y=lambda gdf: gdf['use'].mean()))
+        dfy = dfy.groupby(['name', 'elo'], as_index=False).apply(lambda gdf: gdf.assign(ban_y=lambda gdf: gdf['ban'].mean()))
         dfy = dfy[dfy['runtime'] == runtime]
         dfy = dfy[['name', 'win_y', 'use_y', 'ban_y', 'elo']]
         print(dfy)
