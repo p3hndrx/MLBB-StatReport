@@ -109,7 +109,7 @@ for tp in period:
         print(dfs)
     elif tp == "day7":
         dfw = dfx.groupby(['name', 'elo'], as_index=True).apply(lambda gdf: gdf.assign(win_w=lambda gdf: gdf['win'].mean()))
-        dfw = dfw.groupby(['name', 'elo'], as_index=True).apply(lambda gdf: gdf.assign(use_w=lambda gdf: gdf['use'].mean()))
+        dfw = dfw.groupby(['name', 'elo']).apply(lambda gdf: gdf.assign(use_w=lambda gdf: gdf['use'].mean()))
         dfw = dfw.groupby(['name', 'elo'], as_index=True).apply(lambda gdf: gdf.assign(ban_w=lambda gdf: gdf['ban'].mean()))
         dfw = dfw[dfw['runtime'] == runtime]
         dfw = dfw[['name', 'win_w','use_w','ban_w','elo']]
