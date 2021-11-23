@@ -19,9 +19,9 @@ import roles
 # endregion
 
 # region ENVIRONMENT
-logging.basicConfig(filename="/tmp/sync-reportgen-type5.log", level=logging.DEBUG,
+logging.basicConfig(filename="/tmp/sync-reportgen-type6.log", level=logging.DEBUG,
                     format="%(asctime)s:%(levelname)s:%(message)s")
-logging.info(f"********************** STARTING REPORT GEN - RECENT SUMMARY With Period Summary")
+logging.info(f"********************** STARTING REPORT GEN - FULL SUMMARY With Period Summary")
 print("Starting Report Gen...")
 # endregion
 
@@ -47,7 +47,7 @@ logging.info(f"Crawl Runtimes: {runtimes}")
 
 # DATASETS
 crit = ['win','use','ban']
-period = ["day1","day7","day30","day90"]
+period = ["day1","day30","day60","day90","day180","day365"]
 level = ["All", "Legend", "Mythic"]
 prof = ["assassin","marksman","mage","tank","support","fighter"]
 
@@ -76,15 +76,18 @@ for tp in period:
     if tp == "day1":
         d = 1
         dt = "Day"
-    elif tp == "day7":
-        d = 7
-        dt = "Week"
     elif tp == "day30":
         d = 30
         dt = "Month"
+    elif tp == "day60":
+        d = 60
+        dt = "BiMonth"
     elif tp == "day90":
         d = 90
         dt = "Season"
+    elif tp == "day180":
+        d = 180
+        dt = "SemiAnnual"
     elif tp == "day365":
         d = 365
         dt = "Year"
@@ -98,23 +101,14 @@ for tp in period:
 
     # TEST OUT TO CSV
     #print(f"Source Table... \n{dfx}")
-    dfx.to_csv(f"{reportout}/csv/rd.{dt}.master.csv",index=False)
-    print(f"Combined CSV: {reportout}/rd.{dt}.master.csv")
+    #dfx.to_csv(f"{reportout}/csv/rd.{dt}.master.csv",index=False)
+    #print(f"Combined CSV: {reportout}/rd.{dt}.master.csv")
     #input("Press Enter to continue...")
 
     # Calculate Averages
     if tp == "day1":
         dfs['name'] = dfx['name'].values
         dfs['elo'] = dfx['elo'].values
-        print(dfs)
-    elif tp == "day7":
-        dfw = dfx.groupby(['name', 'elo'], as_index=True).apply(lambda gdf: gdf.assign(win_w=lambda gdf: gdf['win'].mean()))
-        dfw = dfw.groupby(['name', 'elo'], as_index=True).apply(lambda gdf: gdf.assign(use_w=lambda gdf: gdf['use'].mean()))
-        dfw = dfw.groupby(['name', 'elo'], as_index=True).apply(lambda gdf: gdf.assign(ban_w=lambda gdf: gdf['ban'].mean()))
-        dfw = dfw[dfw['runtime'] == runtime]
-        dfw = dfw[['name', 'win_w','use_w','ban_w','elo']]
-        print(dfw)
-        dfs = pd.merge(dfs, dfw, how='inner', on=['name', 'elo'])
         print(dfs)
     elif tp == "day30":
         dfm = dfx.groupby(['name', 'elo'], as_index=True).apply(lambda gdf: gdf.assign(win_m=lambda gdf: gdf['win'].mean()))
@@ -125,6 +119,15 @@ for tp in period:
         print(dfm)
         dfs = pd.merge(dfs, dfm, how='inner', on=['name', 'elo'])
         print(dfs)
+    elif tp == "day60":
+        dfb = dfx.groupby(['name', 'elo'], as_index=True).apply(lambda gdf: gdf.assign(win_b=lambda gdf: gdf['win'].mean()))
+        dfb = dfb.groupby(['name', 'elo'], as_index=True).apply(lambda gdf: gdf.assign(use_b=lambda gdf: gdf['use'].mean()))
+        dfb = dfb.groupby(['name', 'elo'], as_index=True).apply(lambda gdf: gdf.assign(ban_b=lambda gdf: gdf['ban'].mean()))
+        dfb = dfb[dfb['runtime'] == runtime]
+        dfb = dfb[['name', 'win_b', 'use_b', 'ban_b', 'elo']]
+        print(dfb)
+        dfs = pd.merge(dfs, dfb, how='inner', on=['name', 'elo'])
+        print(dfs)
     elif tp == "day90":
         df3 = dfx.groupby(['name', 'elo'], as_index=True).apply(lambda gdf: gdf.assign(win_s=lambda gdf: gdf['win'].mean()))
         df3 = df3.groupby(['name', 'elo'], as_index=True).apply(lambda gdf: gdf.assign(use_s=lambda gdf: gdf['use'].mean()))
@@ -133,6 +136,15 @@ for tp in period:
         df3 = df3[['name', 'win_s', 'use_s', 'ban_s', 'elo']]
         print(df3)
         dfs = pd.merge(dfs, df3, how='inner', on=['name', 'elo'])
+        print(dfs)
+    elif tp == "day180":
+        dfa = dfx.groupby(['name', 'elo'], as_index=True).apply(lambda gdf: gdf.assign(win_a=lambda gdf: gdf['win'].mean()))
+        dfa = dfa.groupby(['name', 'elo'], as_index=True).apply(lambda gdf: gdf.assign(use_a=lambda gdf: gdf['use'].mean()))
+        dfa = dfa.groupby(['name', 'elo'], as_index=True).apply(lambda gdf: gdf.assign(ban_a=lambda gdf: gdf['ban'].mean()))
+        dfa = dfa[dfa['runtime'] == runtime]
+        dfa = dfa[['name', 'win_a', 'use_a', 'ban_a', 'elo']]
+        print(dfa)
+        dfs = pd.merge(dfs, dfa, how='inner', on=['name', 'elo'])
         print(dfs)
     elif tp == "day365":
         dfy = dfx.groupby(['name', 'elo'], as_index=True).apply(lambda gdf: gdf.assign(win_y=lambda gdf: gdf['win'].mean()))
@@ -145,9 +157,8 @@ for tp in period:
         print(dfs)
 
 print(dfs)
-dfs = dfs.round(2)
-dfs.to_csv(f"{reportout}/csv/rd.averages.master.csv",index=False)
-print(f"Combined CSV: {reportout}/csv/rd.averages.master.csv")
+dfs.to_csv(f"{reportout}/csv/rd.averages.full.csv",index=False)
+print(f"Combined CSV: {reportout}/csv/rd.averages.full.csv")
 # endregion
 
 # region CLOSE-FOOTER
