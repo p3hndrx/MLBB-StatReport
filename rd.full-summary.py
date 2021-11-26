@@ -157,6 +157,14 @@ for tp in period:
         print(dfs)
 
 print(dfs)
+dfs = dfs.round(2)
+
+# ROLE
+for p in prof:
+    # print(f"Matching {p}:")
+    rslt = getattr(roles, p)
+    dfs.loc[dfs.name.isin(rslt), 'role'] = p
+
 dfs.to_csv(f"{reportout}/csv/rd.averages.full.csv",index=False)
 print(f"Combined CSV: {reportout}/csv/rd.averages.full.csv")
 # endregion
