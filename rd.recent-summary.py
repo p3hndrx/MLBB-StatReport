@@ -151,7 +151,7 @@ dfs = dfs.round(2)
 for p in prof:
     # print(f"Matching {p}:")
     rslt = getattr(roles, p)
-    dfs.loc[dfx.name.isin(rslt), 'role'] = p
+    dfs.loc[dfs.name.isin(rslt), 'role'] = p
 
 dfs.to_csv(f"{reportout}/csv/rd.averages.master.csv",index=False)
 print(f"Combined CSV: {reportout}/csv/rd.averages.master.csv")
