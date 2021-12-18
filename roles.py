@@ -20,7 +20,7 @@ tank=['Akai',
 'Johnson',
 'Khufra',
 'Minotaur',
-'Phylax',
+'Edith',
 'Ruby',
 'Tigreal',
 'Uranus']
