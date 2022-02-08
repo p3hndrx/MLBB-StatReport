@@ -159,8 +159,8 @@ for tp in period:
                                                                    [(40, 60), (0.01, 5), (0.05, 80)]):
 
                 df2.plot(x='runtime', xlabel="Date", y=column, ylabel=column,kind='line', marker='o', linewidth=2, alpha=.7, color=color, legend=False, ax=ax)
-                df_abnormal = df2[(df2[column] < min_normal) | (df2[column] > max_normal)]
-                df_abnormal.plot(x='runtime', xlabel="Date", y=column, ylabel=column,kind='scatter', marker='D',color='white', legend=False, zorder=3, ax=ax)
+                #df_abnormal = df2[(df2[column] < min_normal) | (df2[column] > max_normal)]
+                #df_abnormal.plot(x='runtime', xlabel="Date", y=column, ylabel=column,kind='scatter', marker='D',color='white', legend=False, zorder=3, ax=ax)
                 ax.yaxis.set_major_formatter(FormatStrFormatter('%.2f'))
                 if not df_abnormal.empty:
                     outlier+=1
