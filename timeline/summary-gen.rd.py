@@ -162,8 +162,8 @@ for tp in period:
                 #df_abnormal = df2[(df2[column] < min_normal) | (df2[column] > max_normal)]
                 #df_abnormal.plot(x='runtime', xlabel="Date", y=column, ylabel=column,kind='scatter', marker='D',color='white', legend=False, zorder=3, ax=ax)
                 ax.yaxis.set_major_formatter(FormatStrFormatter('%.2f'))
-                if not df_abnormal.empty:
-                    outlier+=1
+                #if not df_abnormal.empty:
+                #    outlier+=1
 
             plt.style.use('dark_background')
             plt.xticks(rotation=15)
