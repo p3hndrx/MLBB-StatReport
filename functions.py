@@ -69,6 +69,7 @@ def statstable(d, rawpath):
 
                     dfx = pd.concat([dfx, df], axis=0)
                     dfx = dfx.sort_values('runtime', axis=0, ascending=True)
+                    dfx = dfx[dfx['win'] != 0]
             else:
                 print(f"Bad Request: Missing: {jsonfile}")
                 logging.warning(f"Bad Request: Missing: {jsonfile}")
