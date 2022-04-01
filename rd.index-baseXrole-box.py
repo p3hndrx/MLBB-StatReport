@@ -132,123 +132,126 @@ for lvl in level:
             dfp = dfx[dfx['name'].isin(rslt)]
             #print(f"{dfp}")
 
-            #FILTER top 5:
-            latest = dfp['runtime'].iloc[-1]
+            if len(dfp) == 0:
+                logging.info(f"No events for: {p}{lvl}; {period}")
+            else:
+                #FILTER top 5:
+                latest = dfp['runtime'].iloc[-1]
 
-            print(latest)
+                print(latest)
 
-            for c in crit:
+                for c in crit:
 
-                d = latest.strftime("%m/%d/%Y")
-
-
-                #Get top heroes by each criteria
-                print(f"Last Date: {latest}; Top: {c}")
-                logging.info(f"Last Date: {latest}; Top: {c}")
-                rslt_df = dfp[dfp['runtime'] == latest]
-                rslt_df = rslt_df.sort_values(by=[str(c)],ascending=False).head(10)
-                rslt_df = rslt_df[['name', 'win','use','ban']]
-
-                if c == "win":
-                    clabel = "WinRate%"
-                elif c == "ban":
-                    clabel = "BAN"
-                elif c == "use":
-                    clabel = "Use%"
-
-                #print(f"{rslt_df}")
-
-                top = rslt_df['name'].tolist()
-                print(f"{top}")
-                dfc = dfp[dfp['name'].isin(top)]
-                dfc = dfc.sort_values(by=[str(c)], ascending=False)
-
-                print(f"BEFORE: \n{dfc}")
-               # input("Press Enter to continue...")
+                    d = latest.strftime("%m/%d/%Y")
 
 
-                # BOX GRAPH PLOT
-                fig, ax = plt.subplots(facecolor='darkslategrey')
-                plt.style.use('dark_background')
+                    #Get top heroes by each criteria
+                    print(f"Last Date: {latest}; Top: {c}")
+                    logging.info(f"Last Date: {latest}; Top: {c}")
+                    rslt_df = dfp[dfp['runtime'] == latest]
+                    rslt_df = rslt_df.sort_values(by=[str(c)],ascending=False).head(10)
+                    rslt_df = rslt_df[['name', 'win','use','ban']]
+
+                    if c == "win":
+                        clabel = "WinRate%"
+                    elif c == "ban":
+                        clabel = "BAN"
+                    elif c == "use":
+                        clabel = "Use%"
+
+                    #print(f"{rslt_df}")
+
+                    top = rslt_df['name'].tolist()
+                    print(f"{top}")
+                    dfc = dfp[dfp['name'].isin(top)]
+                    dfc = dfc.sort_values(by=[str(c)], ascending=False)
+
+                    print(f"BEFORE: \n{dfc}")
+                   # input("Press Enter to continue...")
 
 
-                dfc.reset_index(inplace=True)
-                df2 = pd.DataFrame({col: vals[str(c)] for col, vals in dfc.groupby(['name'])})
-                meds = df2.median().sort_values()
-                print(meds)
-                ax = df2[meds.index].boxplot(ax=ax, return_type="axes", showmeans=True, fontsize=8, grid=False,positions=range(len(top)))
-                #ax = dfc.boxplot(column=str(c), by=['name'], ax=ax, showmeans=True, fontsize=8, grid=False,positions=range(len(top)))
+                    # BOX GRAPH PLOT
+                    fig, ax = plt.subplots(facecolor='darkslategrey')
+                    plt.style.use('dark_background')
 
-                ax.set(xlabel=None, title=None)
-                plt.xticks(rotation=15)
 
-                p = p.capitalize()
-                #r = r.capitalize()
-                plt.title(
-                    f'Top {p} by {clabel} (As of {d})\nPeriod: {ptitle.capitalize()}, Elo: {lvl}',
-                    fontsize=12,
-                    fontname='monospace')
-                plt.suptitle('')
+                    dfc.reset_index(inplace=True)
+                    df2 = pd.DataFrame({col: vals[str(c)] for col, vals in dfc.groupby(['name'])})
+                    meds = df2.median().sort_values()
+                    print(meds)
+                    ax = df2[meds.index].boxplot(ax=ax, return_type="axes", showmeans=True, fontsize=8, grid=False,positions=range(len(top)))
+                    #ax = dfc.boxplot(column=str(c), by=['name'], ax=ax, showmeans=True, fontsize=8, grid=False,positions=range(len(top)))
 
-                # LABEL
-                print("Generating Labels...")
-                logging.info(f"Generating Labels...")
+                    ax.set(xlabel=None, title=None)
+                    plt.xticks(rotation=15)
 
-                # move the xtick labels
-                ax.set_xticks(range(len(top)))
-                ax.tick_params(axis='x', which='major', pad=20)
+                    p = p.capitalize()
+                    #r = r.capitalize()
+                    plt.title(
+                        f'Top {p} by {clabel} (As of {d})\nPeriod: {ptitle.capitalize()}, Elo: {lvl}',
+                        fontsize=12,
+                        fontname='monospace')
+                    plt.suptitle('')
 
-                # use the ytick values to locate the image
+                    # LABEL
+                    print("Generating Labels...")
+                    logging.info(f"Generating Labels...")
 
-                y = ax.get_xticks()[0]
-                #print(f"{y}")
-                i=0
-                #for i, (name, data) in enumerate(dfc.groupby('name')):
-                for (name, data) in meds.iteritems():
-                    xy = (i, y)
-                    shero = name.replace("-", "").replace("'", "").replace(".", "").replace(" ", "").lower()
-                    fn = f"{imgsrc}/{shero}.png"  # path to file
-                    arr_img = plt.imread(fn, format='png')
-                    imagebox = OffsetImage(arr_img, zoom=0.125)
-                    imagebox.image.axes = ax
+                    # move the xtick labels
+                    ax.set_xticks(range(len(top)))
+                    ax.tick_params(axis='x', which='major', pad=20)
 
-                    trans = ax.get_xaxis_transform()
-                    ab = AnnotationBbox(imagebox, xy, xybox=(0, -15), xycoords=trans,boxcoords="offset points", pad=0, frameon=False)
-                    ax.add_artist(ab)
-                    i+=1
+                    # use the ytick values to locate the image
 
-                i=0
-                #for i, (name, data) in enumerate(dfc.groupby('name')):
-                for (name, data) in meds.iteritems():
+                    y = ax.get_xticks()[0]
+                    #print(f"{y}")
+                    i=0
+                    #for i, (name, data) in enumerate(dfc.groupby('name')):
+                    for (name, data) in meds.iteritems():
+                        xy = (i, y)
+                        shero = name.replace("-", "").replace("'", "").replace(".", "").replace(" ", "").lower()
+                        fn = f"{imgsrc}/{shero}.png"  # path to file
+                        arr_img = plt.imread(fn, format='png')
+                        imagebox = OffsetImage(arr_img, zoom=0.125)
+                        imagebox.image.axes = ax
 
-                    df = rslt_df[rslt_df['name'] == name]
-                    df = df.round(2)
-                    y2 = df.iloc[0][str(c)]
-                    xy2 = (i, y2)
-                    xy = (i, y)
-                    ax.plot(xy2[0], xy2[1], "oy")
-                    offsetbox = TextArea(f"{y2}", textprops=dict(color="white",fontsize="small"))
+                        trans = ax.get_xaxis_transform()
+                        ab = AnnotationBbox(imagebox, xy, xybox=(0, -15), xycoords=trans,boxcoords="offset points", pad=0, frameon=False)
+                        ax.add_artist(ab)
+                        i+=1
 
-                    trans = ax.get_xaxis_transform()
-                    ab = AnnotationBbox(offsetbox, xy,
-                                        xybox=(0, 10),
-                                        xycoords=trans,
-                                        boxcoords="offset points",
-                                        pad=0, frameon=False)
-                    #arrowprops=dict(arrowstyle="->")
-                    ax.add_artist(ab)
-                    print(f"{name}:{xy}")
-                    #input("Press Enter to continue...")
-                    i+=1
-                # file output
-                #plt.show()
-                op = f"{reportout}/{lvl}/{ptitle}.{p}.{c}.png"
-                plt.savefig(op, transparent=False, bbox_inches="tight")
-                print(f"Combined Image: {op}")
-                logging.info(f"Combined Image: {op}")
+                    i=0
+                    #for i, (name, data) in enumerate(dfc.groupby('name')):
+                    for (name, data) in meds.iteritems():
 
-                plt.close('all')
-            #input("Press Enter to continue...")
+                        df = rslt_df[rslt_df['name'] == name]
+                        df = df.round(2)
+                        y2 = df.iloc[0][str(c)]
+                        xy2 = (i, y2)
+                        xy = (i, y)
+                        ax.plot(xy2[0], xy2[1], "oy")
+                        offsetbox = TextArea(f"{y2}", textprops=dict(color="white",fontsize="small"))
+
+                        trans = ax.get_xaxis_transform()
+                        ab = AnnotationBbox(offsetbox, xy,
+                                            xybox=(0, 10),
+                                            xycoords=trans,
+                                            boxcoords="offset points",
+                                            pad=0, frameon=False)
+                        #arrowprops=dict(arrowstyle="->")
+                        ax.add_artist(ab)
+                        print(f"{name}:{xy}")
+                        #input("Press Enter to continue...")
+                        i+=1
+                    # file output
+                    #plt.show()
+                    op = f"{reportout}/{lvl}/{ptitle}.{p}.{c}.png"
+                    plt.savefig(op, transparent=False, bbox_inches="tight")
+                    print(f"Combined Image: {op}")
+                    logging.info(f"Combined Image: {op}")
+
+                    plt.close('all')
+                #input("Press Enter to continue...")
 
 
 # endregion

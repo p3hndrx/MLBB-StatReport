@@ -132,106 +132,109 @@ for lvl in level:
             dfp = dfx[dfx['name'].isin(rslt)]
             #print(f"{dfp}")
 
-            #FILTER top 5:
-            latest = dfp['runtime'].iloc[-1]
+            if len(dfp) == 0:
+                logging.info(f"No events for: {p}{lvl}; {period}")
+            else:
+                #FILTER top 5:
+                latest = dfp['runtime'].iloc[-1]
 
-            print(latest)
+                print(latest)
 
-            for c in crit:
+                for c in crit:
 
-                d = latest.strftime("%m/%d/%Y")
+                    d = latest.strftime("%m/%d/%Y")
 
 
-                #Get top heroes by each criteria
-                print(f"Last Date: {latest}; Top: {c}")
-                logging.info(f"Last Date: {latest}; Top: {c}")
-                rslt_df = dfp[dfp['runtime'] == latest]
-                print(f"Latest Run: {rslt_df}")
-                rslt_df = rslt_df.sort_values(by=[str(c)],ascending=False).head(5)
-                rslt_df = rslt_df[['name', 'win','use','ban']]
+                    #Get top heroes by each criteria
+                    print(f"Last Date: {latest}; Top: {c}")
+                    logging.info(f"Last Date: {latest}; Top: {c}")
+                    rslt_df = dfp[dfp['runtime'] == latest]
+                    print(f"Latest Run: {rslt_df}")
+                    rslt_df = rslt_df.sort_values(by=[str(c)],ascending=False).head(5)
+                    rslt_df = rslt_df[['name', 'win','use','ban']]
 
-                if c == "win":
-                    clabel = "WinRate%"
-                elif c == "ban":
-                    clabel = "BAN"
-                elif c == "use":
-                    clabel = "Use%"
+                    if c == "win":
+                        clabel = "WinRate%"
+                    elif c == "ban":
+                        clabel = "BAN"
+                    elif c == "use":
+                        clabel = "Use%"
 
-                print(f"{rslt_df}")
+                    print(f"{rslt_df}")
 
-                top = rslt_df['name'].tolist()
-                #print(f"{top}")
-                dfc = dfp[dfp['name'].isin(top)]
-                dfc.sort_values(by=[str(c)], ascending=1)
-                print(f"{dfc}")
+                    top = rslt_df['name'].tolist()
+                    #print(f"{top}")
+                    dfc = dfp[dfp['name'].isin(top)]
+                    dfc.sort_values(by=[str(c)], ascending=1)
+                    print(f"{dfc}")
+                    #input("Press Enter to continue...")
+
+
+                    # HISTORICAL GRAPH PLOT
+                    fig, ax = plt.subplots(facecolor='darkslategrey')
+                    plt.style.use('dark_background')
+
+                    dfc.pivot(index='runtime', columns='name', values=c).plot(figsize=(10, 5), marker='o',linewidth=2,ax=ax)
+                    plt.xticks(rotation=15)
+                    p = p.capitalize()
+                    #r = r.capitalize()
+
+                    plt.suptitle(
+                        f'Historical Top 5 {p} by {clabel} (As of {d})\nPeriod: {ptitle.capitalize()}, Elo: {lvl}',
+                        fontsize=12,
+                        fontname='monospace')
+                    plt.legend(loc=2)
+                    ax.xaxis.set_minor_locator(mdates.DayLocator(interval=1))
+                    ax.xaxis.set_minor_formatter(mdates.DateFormatter(''))
+                    ax.xaxis.set_major_locator(mdates.DayLocator(interval=5))
+                    ax.xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m-%d'))
+
+                    # LABEL
+                    print("Generating Labels...")
+                    logging.info(f"Generating Labels...")
+                    for hero in top:
+                        shero = hero.replace("-", "").replace("'", "").replace(".", "").replace(" ", "").lower()
+                        print(f"Searching {shero} from {hero}")
+                        logging.debug(f"Searching {shero} from {hero}")
+
+
+                        #Generate Coordinates
+                        #search
+                        dfh = rslt_df[rslt_df['name']==hero]
+                        dfh = dfh.round(2)
+                        val = dfh[str(c)].values[0]
+                        xy = (d, val)
+
+                        fn = get_sample_data(f"{imgsrc}/{shero}.png", asfileobj=False)
+                        arr_img = plt.imread(fn, format='png')
+                        imagebox = OffsetImage(arr_img, zoom=0.125)
+                        imagebox.image.axes = ax
+
+                        print(fn)
+                        ab = AnnotationBbox(imagebox, xy,
+                                            xybox=(15.,0),
+                                            xycoords='data',
+                                            boxcoords="offset points",
+                                            pad=0,
+                                            frameon=False
+                                            )
+                        logging.info(f"Coord: {xy}")
+                        print(f"Coord: {xy}")
+                        ax.add_artist(ab)
+
+                        # Fix the display limits to see everything
+                        #ax.set_xlim(0, 1)
+                        #ax.set_ylim(0, 1)
+
+                    # file output
+                    #plt.show()
+                    op = f"{reportout}/{lvl}/{ptitle}.{p}.{c}.png"
+                    plt.savefig(op, transparent=False, bbox_inches="tight")
+                    print(f"Combined Image: {op}")
+                    logging.info(f"Combined Image: {op}")
+
+                    plt.close('all')
                 #input("Press Enter to continue...")
-
-
-                # HISTORICAL GRAPH PLOT
-                fig, ax = plt.subplots(facecolor='darkslategrey')
-                plt.style.use('dark_background')
-
-                dfc.pivot(index='runtime', columns='name', values=c).plot(figsize=(10, 5), marker='o',linewidth=2,ax=ax)
-                plt.xticks(rotation=15)
-                p = p.capitalize()
-                #r = r.capitalize()
-
-                plt.suptitle(
-                    f'Historical Top 5 {p} by {clabel} (As of {d})\nPeriod: {ptitle.capitalize()}, Elo: {lvl}',
-                    fontsize=12,
-                    fontname='monospace')
-                plt.legend(loc=2)
-                ax.xaxis.set_minor_locator(mdates.DayLocator(interval=1))
-                ax.xaxis.set_minor_formatter(mdates.DateFormatter(''))
-                ax.xaxis.set_major_locator(mdates.DayLocator(interval=5))
-                ax.xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m-%d'))
-
-                # LABEL
-                print("Generating Labels...")
-                logging.info(f"Generating Labels...")
-                for hero in top:
-                    shero = hero.replace("-", "").replace("'", "").replace(".", "").replace(" ", "").lower()
-                    print(f"Searching {shero} from {hero}")
-                    logging.debug(f"Searching {shero} from {hero}")
-
-
-                    #Generate Coordinates
-                    #search
-                    dfh = rslt_df[rslt_df['name']==hero]
-                    dfh = dfh.round(2)
-                    val = dfh[str(c)].values[0]
-                    xy = (d, val)
-
-                    fn = get_sample_data(f"{imgsrc}/{shero}.png", asfileobj=False)
-                    arr_img = plt.imread(fn, format='png')
-                    imagebox = OffsetImage(arr_img, zoom=0.125)
-                    imagebox.image.axes = ax
-
-                    print(fn)
-                    ab = AnnotationBbox(imagebox, xy,
-                                        xybox=(15.,0),
-                                        xycoords='data',
-                                        boxcoords="offset points",
-                                        pad=0,
-                                        frameon=False
-                                        )
-                    logging.info(f"Coord: {xy}")
-                    print(f"Coord: {xy}")
-                    ax.add_artist(ab)
-
-                    # Fix the display limits to see everything
-                    #ax.set_xlim(0, 1)
-                    #ax.set_ylim(0, 1)
-
-                # file output
-                #plt.show()
-                op = f"{reportout}/{lvl}/{ptitle}.{p}.{c}.png"
-                plt.savefig(op, transparent=False, bbox_inches="tight")
-                print(f"Combined Image: {op}")
-                logging.info(f"Combined Image: {op}")
-
-                plt.close('all')
-            #input("Press Enter to continue...")
 
 
 # endregion
