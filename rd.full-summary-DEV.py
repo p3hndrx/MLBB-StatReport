@@ -13,8 +13,9 @@ from matplotlib.cbook import get_sample_data
 from matplotlib import dates as mdates
 
 import logging
-import roles
-
+#import roles
+from functions import statstable, heroesgen
+roles=heroesgen()
 
 # endregion
 
@@ -93,7 +94,7 @@ for tp in period:
         dt = "Year"
 
     print(f"Running: {dt}:{tp}")
-    from functions import statstable
+
     dfx = statstable(d, rawpath)
 
     #print(dfx)

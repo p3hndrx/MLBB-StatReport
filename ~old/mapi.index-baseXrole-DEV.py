@@ -2,14 +2,12 @@
 import datetime
 from datetime import timedelta
 import os
-from os.path import exists
 
 import json
 import pandas as pd
 import matplotlib.pyplot as plt
-from matplotlib.offsetbox import TextArea, DrawingArea, OffsetImage, AnnotationBbox
+from matplotlib.offsetbox import OffsetImage, AnnotationBbox
 from matplotlib.cbook import get_sample_data
-from matplotlib import dates as mdates
 
 import logging
 import roles

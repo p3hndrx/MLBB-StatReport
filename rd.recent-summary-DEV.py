@@ -6,14 +6,12 @@ from os.path import exists
 
 import json
 import pandas as pd
-import numpy as np
-import matplotlib.pyplot as plt
-from matplotlib.offsetbox import TextArea, DrawingArea, OffsetImage, AnnotationBbox
-from matplotlib.cbook import get_sample_data
-from matplotlib import dates as mdates
+
 
 import logging
-import roles
+#import roles
+from functions import statstable, heroesgen
+roles=heroesgen()
 
 
 # endregion
@@ -90,7 +88,7 @@ for tp in period:
         dt = "Year"
 
     print(f"Running: {dt}:{tp}")
-    from functions import statstable
+
     dfx = statstable(d, rawpath)
 
     #print(dfx)
@@ -144,12 +142,12 @@ for tp in period:
         dfs = pd.merge(dfs, dfy, how='inner', on=['name', 'elo'])
         print(dfs)
 
-print(dfs)
+#print(dfs)
 dfs = dfs.round(2)
 
 # ROLE
 for p in prof:
-    # print(f"Matching {p}:")
+    print(f"Matching {p}:")
     rslt = getattr(roles, p)
     dfs.loc[dfs.name.isin(rslt), 'role'] = p
 

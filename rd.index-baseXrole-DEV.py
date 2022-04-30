@@ -13,7 +13,10 @@ from matplotlib.cbook import get_sample_data
 from matplotlib import dates as mdates
 
 import logging
-import roles
+#import roles
+from functions import statstable, heroesgen
+roles=heroesgen()
+
 
 
 # endregion
@@ -107,7 +110,6 @@ i = 0
 t = 0
 
 for lvl in level:
-    from functions import statstable
 
     for period in periods:
         if period == 7:
